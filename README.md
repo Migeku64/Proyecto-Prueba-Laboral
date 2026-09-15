@@ -70,22 +70,11 @@ npx serve .
 - **Página de producto**: detalle individual accedido por `producto.html?id=...`.
 - **Descarga de la app móvil**: página dedicada con botón de descarga directa y código QR, según lo solicitado en el requerimiento.
 
-## Descarga de la aplicación móvil
+## Descarga aplicación móvil
 
 El mecanismo elegido es un **botón de descarga directa + código QR** en `descarga.html`, apuntando al `.apk` publicado como **Release de GitHub** (no versionado directamente en el repositorio, para no inflar el historial de git con binarios).
 
-Antes de entregar la prueba:
-1. Pide a tu compañero el archivo `app-release.apk` una vez esté listo.
-2. Ve a la pestaña **Releases** del repositorio en GitHub → **Draft a new release** → adjunta el `.apk`.
-3. Copia el enlace de descarga directa que GitHub genera (algo como `https://github.com/usuario/repo/releases/download/v1.0/app-release.apk`).
-4. Reemplaza el enlace placeholder en `descarga.html` (botón "Descargar APK") y regenera el QR con ese enlace real si quieres (ver `assets/qr-app.png`, generado con la librería `qrcode` de Python).
-
-## Consideraciones técnicas
-
-- No se usó ningún framework de frontend a propósito, para mantener el proyecto simple de instalar/evaluar sin pasos de build.
-- El carrito de compras no está implementado (fuera del alcance definido para esta iteración); el botón "Agregar al carrito" en el detalle de producto queda como siguiente paso natural.
-- El catálogo es estático (JSON local) y no persiste cambios; en una siguiente iteración se conectaría a una API real.
 
 ## Autor
 
-Aplicativo web desarrollado por [tu nombre] como parte de la prueba técnica. La aplicación móvil fue desarrollada por [nombre del compañero].
+Aplicativo web desarrollado por Miguel Pinilla como parte de la prueba técnica. La aplicación móvil fue desarrollada por Santiago Perez.
