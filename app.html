@@ -10,7 +10,17 @@
   <title>KREW | Tienda móvil</title>
 </head>
 <body>
-  <div class="store-app">
+  <section class="auth-screen" id="auth-screen">
+    <div class="auth-brand"><span>KRE</span><b>W</b></div>
+    <div class="auth-card">
+      <div class="auth-heading"><p class="eyebrow">Tu selección urbana</p><h1 id="auth-title">Bienvenido a KREW</h1><p id="auth-subtitle">Inicia sesión para guardar favoritos y continuar comprando.</p></div>
+      <div class="auth-tabs"><button class="auth-tab active" data-auth-mode="login">Iniciar sesión</button><button class="auth-tab" data-auth-mode="register">Crear cuenta</button></div>
+      <form id="login-form" class="auth-form"><label>Correo electrónico<input type="email" id="login-email" autocomplete="email" required placeholder="tu@correo.com"></label><label>Contraseña<input type="password" id="login-password" autocomplete="current-password" required placeholder="Mínimo 6 caracteres"></label><button class="auth-submit" type="submit">Entrar a KREW <span>→</span></button><p class="auth-message" id="login-message" role="alert"></p></form>
+      <form id="register-form" class="auth-form is-hidden"><label>Nombre<input type="text" id="register-name" autocomplete="name" required placeholder="Tu nombre"></label><label>Correo electrónico<input type="email" id="register-email" autocomplete="email" required placeholder="tu@correo.com"></label><label>Contraseña<input type="password" id="register-password" autocomplete="new-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><button class="auth-submit" type="submit">Crear mi cuenta <span>→</span></button><p class="auth-message" id="register-message" role="alert"></p></form>
+      <p class="auth-note">Cuenta local de demostración para esta propuesta.</p>
+    </div>
+  </section>
+  <div class="store-app is-hidden" id="store-app">
     <header class="mobile-header">
       <a class="mobile-brand" href="app.html"><span>KRE</span><b>W</b></a>
       <div class="mobile-header-actions"><button class="header-icon" id="account-button" aria-label="Mi cuenta">◎</button><button class="header-icon cart-trigger" aria-label="Carrito"><span>□</span><em id="cart-count">0</em></button></div>
@@ -32,6 +42,7 @@
   <dialog id="product-dialog"><div class="product-dialog-inner"><button class="dialog-close" aria-label="Cerrar">×</button><div id="dialog-content"></div></div></dialog>
   <script src="js/icons.js"></script>
   <script src="js/utils.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/store.js"></script>
 </body>
 </html>
