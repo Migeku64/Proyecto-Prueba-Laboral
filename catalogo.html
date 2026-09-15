@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo — KREW</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand">KRE<span>W</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html" class="active">Catálogo</a>
+      <a href="descarga.html">App móvil</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="header-actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Cambiar tema">☾</button>
+    </div>
+  </div>
+</header>
+
+<section class="block tight">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Catálogo</h2>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Buscar por nombre o descripción, ej: auriculares, tenis, power bank…">
+    </div>
+
+    <div class="catalog-layout">
+      <aside class="filters">
+        <h3>Filtros</h3>
+
+        <div class="filter-group">
+          <label class="group-label">Categoría</label>
+          <label class="checkbox-row"><input type="checkbox" class="cat-check" value="audio"> Audio</label>
+          <label class="checkbox-row"><input type="checkbox" class="cat-check" value="calzado"> Calzado</label>
+          <label class="checkbox-row"><input type="checkbox" class="cat-check" value="apparel"> Apparel</label>
+          <label class="checkbox-row"><input type="checkbox" class="cat-check" value="gadgets"> Gadgets</label>
+          <label class="checkbox-row"><input type="checkbox" class="cat-check" value="hogar"> Hogar</label>
+          <label class="checkbox-row"><input type="checkbox" class="cat-check" value="gaming"> Gaming</label>
+        </div>
+
+        <div class="filter-group">
+          <label class="group-label">Precio (COP)</label>
+          <div class="price-inputs">
+            <input type="number" id="price-min" placeholder="Mín">
+            <span>—</span>
+            <input type="number" id="price-max" placeholder="Máx">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="checkbox-row"><input type="checkbox" id="offer-check"> Solo ofertas</label>
+        </div>
+
+        <button class="clear-filters" id="clear-filters">Limpiar filtros</button>
+      </aside>
+
+      <div>
+        <div class="catalog-toolbar">
+          <span class="result-count" id="result-count">Cargando…</span>
+          <select class="sort-select" id="sort-select">
+            <option value="relevancia">Relevancia</option>
+            <option value="precio-asc">Precio: menor a mayor</option>
+            <option value="precio-desc">Precio: mayor a menor</option>
+            <option value="nombre">Nombre A-Z</option>
+          </select>
+        </div>
+        <div class="product-grid" id="catalog-grid"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-bottom">© 2026 KREW. Propuesta técnica desarrollada como evolución de la plataforma de referencia VOKTER.</div>
+</footer>
+
+<script src="js/icons.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/catalogo.js"></script>
+</body>
+</html>

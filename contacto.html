@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contacto — KREW</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  .contact-form { max-width: 520px; display: flex; flex-direction: column; gap: 16px; }
+  .contact-form label { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .contact-form input, .contact-form textarea {
+    border: 1px solid var(--line); background: var(--bg-elevated); color: var(--ink);
+    padding: 12px 14px; font-family: var(--font-body); font-size: 14.5px; width: 100%;
+  }
+  .contact-form textarea { min-height: 120px; resize: vertical; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand">KRE<span>W</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="descarga.html">App móvil</a>
+      <a href="contacto.html" class="active">Contacto</a>
+    </nav>
+    <div class="header-actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Cambiar tema">☾</button>
+    </div>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+    <div class="section-head"><h2>Hablemos</h2></div>
+    <p style="color:var(--ink-soft); max-width:46ch; margin-bottom:32px;">¿Dudas sobre un pedido o quieres proponer una alianza? Escríbenos.</p>
+    <form class="contact-form" onsubmit="event.preventDefault(); this.reset(); document.querySelector('#form-msg').textContent='Mensaje enviado. Te responderemos pronto.';">
+      <div>
+        <label for="nombre">Nombre</label>
+        <input id="nombre" type="text" required>
+      </div>
+      <div>
+        <label for="email">Correo</label>
+        <input id="email" type="email" required>
+      </div>
+      <div>
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" required></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Enviar mensaje</button>
+      <p id="form-msg" style="color: var(--accent); font-size: 14px; min-height: 20px;"></p>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-bottom">© 2026 KREW. Propuesta técnica desarrollada como evolución de la plataforma de referencia VOKTER.</div>
+</footer>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

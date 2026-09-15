@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Producto — KREW</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  .product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .product-detail .product-thumb { aspect-ratio: 1 / 1; }
+  .product-detail .product-thumb svg { width: 96px; height: 96px; }
+  .back-link { display:inline-block; margin-bottom: 24px; color: var(--ink-soft); text-decoration:none; font-size: 14px; }
+  .back-link:hover { color: var(--accent); }
+  @media (max-width: 900px) { .product-detail { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="index.html" class="brand">KRE<span>W</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html" class="active">Catálogo</a>
+      <a href="descarga.html">App móvil</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="header-actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Cambiar tema">☾</button>
+    </div>
+  </div>
+</header>
+
+<section class="block tight">
+  <div class="wrap">
+    <a href="catalogo.html" class="back-link">← Volver al catálogo</a>
+    <div id="detail-container">
+      <div class="empty-state">Cargando producto…</div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-bottom">© 2026 KREW. Propuesta técnica desarrollada como evolución de la plataforma de referencia VOKTER.</div>
+</footer>
+
+<script src="js/icons.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/theme.js"></script>
+<script>
+(async function () {
+  const container = document.querySelector("#detail-container");
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  let productos = [];
+  try {
+    productos = await fetchProducts();
+  } catch (e) {
+    container.innerHTML = `<div class="empty-state">No se pudo cargar el catálogo.</div>`;
+    return;
+  }
+
+  const producto = productos.find((p) => p.id === id);
+  if (!producto) {
+    container.innerHTML = `<div class="empty-state">No encontramos ese producto. <a href="catalogo.html">Volver al catálogo</a>.</div>`;
+    return;
+  }
+
+  const oferta = producto.oferta
+    ? `<span class="tag-oferta">Oferta</span>`
+    : "";
+  const precioAnterior = producto.oferta
+    ? `<span class="price-old">${formatPrice(producto.precioAnterior)}</span>`
+    : "";
+
+  container.innerHTML = `
+    <div class="product-detail">
+      <div class="product-thumb" style="--card-accent: var(--cat-${producto.categoria})">
+        ${oferta}
+        ${getIcon(producto.icono)}
+      </div>
+      <div>
+        <span class="product-cat" style="color:var(--cat-${producto.categoria})">${CATEGORY_LABELS[producto.categoria]}</span>
+        <h1 style="font-family:var(--font-display); font-size:38px; margin:8px 0 16px;">${producto.nombre}</h1>
+        <p style="color:var(--ink-soft); font-size:15.5px; max-width:48ch;">${producto.descripcion}</p>
+        <div class="product-price-row" style="margin:20px 0;">
+          <span class="price-now" style="font-size:26px;">${formatPrice(producto.precio)}</span>
+          ${precioAnterior}
+        </div>
+        <p style="font-size:13.5px; color:var(--ink-soft); margin-bottom:24px;">${producto.stock} unidades disponibles</p>
+        <button class="btn btn-primary">Agregar al carrito</button>
+      </div>
+    </div>
+  `;
+})();
+</script>
+</body>
+</html>
