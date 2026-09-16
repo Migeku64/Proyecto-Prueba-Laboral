@@ -40,10 +40,12 @@
   </div>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="product-dialog"><div class="product-dialog-inner"><button class="dialog-close" aria-label="Cerrar">×</button><div id="dialog-content"></div></div></dialog>
+  <dialog id="cart-dialog"><div class="cart-dialog-inner"><button class="dialog-close cart-close" aria-label="Cerrar">×</button><p class="eyebrow">Tu selección</p><h2>Carrito</h2><div id="cart-list" class="cart-list"></div><div class="cart-summary"><span>Total</span><strong id="cart-total">$ 0</strong></div><button class="dialog-add" id="checkout-button">Continuar al pago</button></div></dialog>
+  <dialog id="checkout-dialog"><div class="checkout-inner"><button class="dialog-close checkout-close" aria-label="Cerrar">×</button><p class="eyebrow">Compra segura</p><h2>Finalizar compra</h2><p class="checkout-note">Esta es una simulación. No se realizará ningún cobro.</p><form id="checkout-form"><label>Nombre completo<input required id="checkout-name" placeholder="Tu nombre"></label><label>Dirección de entrega<input required id="checkout-address" placeholder="Calle 00 # 00-00"></label><div class="checkout-row"><label>Ciudad<input required id="checkout-city" value="Bogotá"></label><label>Tarjeta<input required id="checkout-card" inputmode="numeric" maxlength="4" placeholder="Últimos 4 dígitos"></label></div><button class="dialog-add" type="submit">Confirmar compra</button><p class="checkout-message" id="checkout-message" role="status"></p></form></div></dialog>
   <script src="js/icons.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/auth.js"></script>
-  <script src="js/store.js"></script>
+  <script src="js/commerce.js"></script>
 </body>
 </html>
