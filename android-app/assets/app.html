@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1d38">
+  <meta name="description" content="KREW móvil: tecnología y streetwear urbano.">
+  <link rel="manifest" href="app.webmanifest">
+  <link rel="stylesheet" href="css/app.css">
+  <title>KREW | Tienda móvil</title>
+</head>
+<body>
+  <section class="auth-screen" id="auth-screen">
+    <div class="auth-brand"><span>KRE</span><b>W</b></div>
+    <div class="auth-card">
+      <div class="auth-heading"><p class="eyebrow">Tu selección urbana</p><h1 id="auth-title">Bienvenido a KREW</h1><p id="auth-subtitle">Inicia sesión para guardar favoritos y continuar comprando.</p></div>
+      <div class="auth-tabs"><button class="auth-tab active" data-auth-mode="login">Iniciar sesión</button><button class="auth-tab" data-auth-mode="register">Crear cuenta</button></div>
+      <form id="login-form" class="auth-form"><label>Correo electrónico<input type="email" id="login-email" autocomplete="email" required placeholder="tu@correo.com"></label><label>Contraseña<input type="password" id="login-password" autocomplete="current-password" required placeholder="Mínimo 6 caracteres"></label><button class="auth-submit" type="submit">Entrar a KREW <span>→</span></button><p class="auth-message" id="login-message" role="alert"></p></form>
+      <form id="register-form" class="auth-form is-hidden"><label>Nombre<input type="text" id="register-name" autocomplete="name" required placeholder="Tu nombre"></label><label>Correo electrónico<input type="email" id="register-email" autocomplete="email" required placeholder="tu@correo.com"></label><label>Contraseña<input type="password" id="register-password" autocomplete="new-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><button class="auth-submit" type="submit">Crear mi cuenta <span>→</span></button><p class="auth-message" id="register-message" role="alert"></p></form>
+      <p class="auth-note">Cuenta local de demostración para esta propuesta.</p>
+    </div>
+  </section>
+  <div class="store-app is-hidden" id="store-app">
+    <header class="mobile-header">
+      <a class="mobile-brand" href="app.html"><span>KRE</span><b>W</b></a>
+      <div class="mobile-header-actions"><button class="header-icon theme-toggle" data-theme-toggle aria-label="Cambiar a modo oscuro">☾</button><button class="header-icon" id="account-button" aria-label="Mi cuenta">◎</button><button class="header-icon cart-trigger" aria-label="Carrito"><span>□</span><em id="cart-count">0</em></button></div>
+    </header>
+    <main>
+      <section class="store-hero"><div><p class="hero-kicker">KREW / 2026</p><h1>Equipo para<br>la calle.</h1><p>Audio, calzado, gadgets y apparel seleccionados para moverte a tu ritmo.</p><button class="hero-button" data-scroll-products>Explorar colección <span>→</span></button></div><div class="hero-orbit"><span class="orbit-label">01<br><small>DROP</small></span><div class="hero-product-shape"><i></i><b></b><em></em></div></div></section>
+      <section class="store-content">
+        <div class="section-row"><div><p class="eyebrow">Selección KREW</p><h2>Encuentra tu próximo esencial</h2></div><button class="filter-trigger" id="filter-button">Filtrar <span>≡</span></button></div>
+        <div class="search-wrap"><span>⌕</span><input id="mobile-search" type="search" placeholder="Buscar productos" aria-label="Buscar productos"><button id="clear-search" aria-label="Limpiar búsqueda">×</button></div>
+        <div class="category-scroll" aria-label="Categorías"><button class="category-chip active" data-category="todos">Todo</button><button class="category-chip" data-category="audio">Audio</button><button class="category-chip" data-category="calzado">Calzado</button><button class="category-chip" data-category="apparel">Apparel</button><button class="category-chip" data-category="gadgets">Gadgets</button><button class="category-chip" data-category="gaming">Gaming</button></div>
+        <div class="promo-strip"><div><span>DROP 02 / OFERTAS</span><strong>Hasta 20% off<br>en seleccionados</strong></div><span class="promo-arrow">↗</span></div>
+        <div class="product-heading"><h2>Destacados</h2><span id="product-count">12 productos</span></div>
+        <div class="mobile-products" id="mobile-products"><div class="loading-state">Cargando selección...</div></div>
+      </section>
+    </main>
+    <nav class="store-nav" aria-label="Navegación de la tienda"><button class="store-nav-item active" data-nav="inicio"><span>⌂</span>Inicio</button><button class="store-nav-item" data-nav="buscar"><span>⌕</span>Buscar</button><button class="store-nav-item" data-nav="favoritos"><span>♡</span>Favoritos</button><button class="store-nav-item cart-trigger" data-nav="carrito"><span>□<em id="cart-count-bottom">0</em></span>Carrito</button></nav>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <dialog id="product-dialog"><div class="product-dialog-inner"><button class="dialog-close" aria-label="Cerrar">×</button><div id="dialog-content"></div></div></dialog>
+  <dialog id="cart-dialog"><div class="cart-dialog-inner"><button class="dialog-close cart-close" aria-label="Cerrar">×</button><p class="eyebrow">Tu selección</p><h2>Carrito</h2><div id="cart-list" class="cart-list"></div><div class="cart-summary"><span>Total</span><strong id="cart-total">$ 0</strong></div><button class="dialog-add" id="checkout-button">Continuar al pago</button></div></dialog>
+  <dialog id="checkout-dialog"><div class="checkout-inner"><button class="dialog-close checkout-close" aria-label="Cerrar">×</button><p class="eyebrow">Compra segura</p><h2>Finalizar compra</h2><p class="checkout-note">Esta es una simulación. No se realizará ningún cobro.</p><form id="checkout-form"><label>Nombre completo<input required id="checkout-name" placeholder="Tu nombre"></label><label>Dirección de entrega<input required id="checkout-address" placeholder="Calle 00 # 00-00"></label><div class="checkout-row"><label>Ciudad<input required id="checkout-city" value="Bogotá"></label><label>Tarjeta<input required id="checkout-card" inputmode="numeric" maxlength="4" placeholder="Últimos 4 dígitos"></label></div><button class="dialog-add" type="submit">Confirmar compra</button><p class="checkout-message" id="checkout-message" role="status"></p></form></div></dialog>
+  <script src="js/icons.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/commerce.js"></script>
+</body>
+</html>
