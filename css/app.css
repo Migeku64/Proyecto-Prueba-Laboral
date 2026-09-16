@@ -12,6 +12,7 @@
   --green:#35bc80;
   --shadow:0 12px 30px rgba(11,29,56,.09)
 }
+[data-theme="dark"]{--bg:#0b1d38;--navy:#07152a;--navy-2:#173862;--blue:#55aaf5;--blue-bright:#65b6ff;--ink:#eef5fc;--muted:#9fb1c5;--line:#29415f;--white:#142944;--green:#49c58c;--shadow:0 12px 30px rgba(0,0,0,.2)}
 * {
   box-sizing:border-box
 }
@@ -40,6 +41,7 @@ button {
   padding:0 max(20px,calc((100vw - 1100px)/2));
   color:#fff
 }
+[data-theme="dark"] .store-app{background:#0b1d38}[data-theme="dark"] .store-content{background:#0f2743}[data-theme="dark"] .mobile-product,[data-theme="dark"] .search-wrap,[data-theme="dark"] .filter-trigger,[data-theme="dark"] .store-nav,[data-theme="dark"] .header-icon{background:#142944;color:var(--ink);border-color:#315273}[data-theme="dark"] .product-visual{background:#1a3551}[data-theme="dark"] .category-chip{background:#142944;color:#b4c6d9;border-color:#315273}[data-theme="dark"] .category-chip.active{background:#65b6ff;color:#07152a;border-color:#65b6ff}[data-theme="dark"] .search-wrap input{background:transparent;color:var(--ink)}[data-theme="dark"] .search-wrap input::placeholder{color:#8da3bb}[data-theme="dark"] .store-nav-item{background:transparent;color:#9fb1c5}[data-theme="dark"] .store-nav-item.active{color:#fff}[data-theme="dark"] .promo-strip{background:#07152a}[data-theme="dark"] .auth-card{background:#142944;color:var(--ink)}[data-theme="dark"] .auth-form input{background:#0f2743;color:var(--ink);border-color:#315273}[data-theme="dark"] .auth-tab{color:#9fb1c5}[data-theme="dark"] .auth-tab.active{color:#fff}[data-theme="dark"] .dialog-visual{background:#1a3551!important}[data-theme="dark"] .dialog-close{background:#1e3a58;color:#c6d7e8}[data-theme="dark"] dialog{background:#142944;color:var(--ink)}[data-theme="dark"] .product-dialog-inner p{color:#a8b9ca}[data-theme="dark"] .mobile-price,[data-theme="dark"] .mobile-product h3,[data-theme="dark"] .product-heading h2,[data-theme="dark"] .section-row h2{color:var(--ink)}
 .mobile-brand {
   font:800 25px Manrope;
   letter-spacing:-1.5px;
