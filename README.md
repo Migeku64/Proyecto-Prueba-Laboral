@@ -13,7 +13,7 @@ KREW es una tienda urbana de tecnología y streetwear (audio, calzado, apparel, 
 
 - HTML5, CSS3 (variables nativas para theming, sin frameworks de CSS).
 - JavaScript vanilla (ES6+), sin dependencias ni build step.
-- Datos de catálogo simulados en `data/products.json` (no requiere backend para evaluarse).
+- Datos de catálogo simulados en `data/products.json`.
 - Tipografías: [Big Shoulders Display](https://fonts.google.com/specimen/Big+Shoulders+Display) e [IBM Plex Sans](https://fonts.google.com/specimen/IBM+Plex+Sans) vía Google Fonts.
 
 ## Estructura del proyecto
