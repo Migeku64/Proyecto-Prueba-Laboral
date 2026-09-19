@@ -6,5 +6,12 @@
   "background_color": "#f1f4f8",
   "theme_color": "#0b1d38",
   "description": "Tecnología y streetwear urbano para la calle.",
-  "icons": []
+  "icons": [
+    {
+      "src": "assets/krew-logo.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
