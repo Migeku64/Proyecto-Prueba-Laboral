@@ -77,4 +77,4 @@ El mecanismo elegido es un **botón de descarga directa + código QR** en `desca
 
 ## Autor
 
-Aplicativo web desarrollado por Miguel Pinilla como parte de la prueba técnica. La aplicación móvil fue desarrollada por Santiago Perez.
+Aplicativo web desarrollado por Miguel Angel Pinilla Baez como parte de la prueba técnica. La aplicación móvil fue desarrollada por Hemer Santiago Perez Nieves.
