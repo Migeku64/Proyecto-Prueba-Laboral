@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tienda — VOKTER</title>
+<meta name="description" content="Todos los productos de VOKTER: audio, cables y cargadores, power banks, accesorios, footwear, apparel, hogar y entretenimiento.">
+<meta name="theme-color" content="#0A57F5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%230A57F5'/%3E%3Cpath d='M10.500 12 20 29l9.500-17' fill='none' stroke='white' stroke-width='4.500' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+<script>try{if(localStorage.getItem('vokter-theme')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+</head>
+<body>
+
+<main id="main">
+  <div class="container">
+    <section class="page-hero" id="shop-hero">
+      <nav class="crumbs" aria-label="Ruta de navegación">
+        <a href="index.html">Inicio</a><span>/</span><span id="crumb-current">Tienda</span>
+      </nav>
+      <h1 id="shop-title">Tienda VOKTER</h1>
+      <p id="shop-lead">Sneakers, gadgets y gear esencial para los que viven al límite.</p>
+    </section>
+
+    <div class="shop-top">
+      <div class="shop-search">
+        <span id="shop-search-icon"></span>
+        <label class="sr-only" for="shop-q">Buscar en la tienda</label>
+        <input id="shop-q" type="search" placeholder="Busca por nombre, marca o categoría" autocomplete="off">
+      </div>
+    </div>
+    <div class="tabs" id="cat-tabs" role="tablist" aria-label="Categorías" style="margin-top:16px"></div>
+
+    <div class="shop">
+      <aside class="filters" id="filters" aria-label="Filtros"></aside>
+
+      <section aria-label="Resultados">
+        <div class="toolbar">
+          <span class="result-count" id="count" aria-live="polite"></span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button type="button" class="chip filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filters"></button>
+            <label class="sr-only" for="sort">Ordenar por</label>
+            <select id="sort">
+              <option value="relevancia">Relevancia</option>
+              <option value="precio-asc">Menor precio</option>
+              <option value="precio-desc">Mayor precio</option>
+              <option value="rating">Mejor calificados</option>
+            </select>
+          </div>
+        </div>
+        <div class="active-filters" id="active-filters"></div>
+        <div class="grid" id="grid"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script type="module" src="js/catalogo.js"></script>
+</body>
+</html>

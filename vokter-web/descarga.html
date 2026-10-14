@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Descargar la app — VOKTER</title>
+<meta name="description" content="Descarga la app móvil de VOKTER para Android.">
+<meta name="theme-color" content="#0A57F5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%230A57F5'/%3E%3Cpath d='M10.500 12 20 29l9.500-17' fill='none' stroke='white' stroke-width='4.500' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+<script>try{if(localStorage.getItem('vokter-theme')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}</script>
+</head>
+<body>
+
+<main id="main">
+  <div class="container">
+    <section class="section" style="padding-top:12px">
+      <div class="app-banner" style="min-height:460px">
+        <div>
+          <h1 style="font-family:var(--font-display);font-size:clamp(28px,3.8vw,46px);line-height:1.08;letter-spacing:-.025em;margin-bottom:14px">Lleva VOKTER en tu bolsillo</h1>
+          <p>La misma tienda, ahora en la app para Android: avisos de nuevos drops, tu carrito siempre a mano y compra en pocos toques.</p>
+          <div class="dl-actions">
+            <a class="btn btn-light" id="dl-btn" href="#" download>Descargar APK</a>
+            <button type="button" class="btn btn-glass" id="copy-link"></button>
+          </div>
+          <p class="dl-meta">Android · archivo APK · instalación manual</p>
+        </div>
+        <div id="phone-mock"></div>
+      </div>
+    </section>
+
+    <div class="dl-grid">
+      <section class="panel">
+        <div class="qr-box">
+          <img src="assets/qr-app.png" alt="Código QR para descargar la app de VOKTER" width="168" height="168">
+          <div>
+            <h2>Escanea y descarga</h2>
+            <p>Apunta la cámara de tu celular al código y se abrirá la descarga del APK directamente.</p>
+          </div>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Cómo instalarla</h2>
+        <ol class="steps">
+          <li><strong>Descarga el archivo</strong><span>Toca “Descargar APK” o escanea el código QR desde tu celular.</span></li>
+          <li><strong>Permite la instalación</strong><span>Si Android lo pide, habilita “instalar apps desconocidas” para tu navegador.</span></li>
+          <li><strong>Abre e inicia</strong><span>Abre el archivo descargado, confirma y entra a VOKTER.</span></li>
+        </ol>
+      </section>
+    </div>
+
+    <div class="perks">
+      <div class="perk"><span class="benefit-ico" id="perk-1"></span><h3>Drops primero</h3><p>Notificaciones cuando llegan lanzamientos y ofertas especiales.</p></div>
+      <div class="perk"><span class="benefit-ico" id="perk-2"></span><h3>Compra en pocos toques</h3><p>Carrito y checkout pensados para el celular.</p></div>
+      <div class="perk"><span class="benefit-ico" id="perk-3"></span><h3>El mismo catálogo</h3><p>Las 8 categorías de la tienda web, siempre sincronizadas.</p></div>
+    </div>
+  </div>
+</main>
+
+<script type="module" src="js/descarga.js"></script>
+</body>
+</html>
