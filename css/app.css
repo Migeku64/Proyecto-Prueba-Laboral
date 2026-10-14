@@ -764,6 +764,12 @@ html[data-theme="dark"] .store-nav-item:not(.active) {
   outline-offset: 2px;
 }
 
+.app-download-link {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 /* Keep bundle contents and pricing from colliding. */
 .bundle-card {
   min-height: 410px;
