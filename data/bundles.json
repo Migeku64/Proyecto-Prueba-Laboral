@@ -1,0 +1,17 @@
+[
+  {
+    "id": "bundle-running", "nombre": "Bundle Running", "descripcion": "Sneakers + Balaca + Power Bank",
+    "descuento": 15, "c1": "#E5384F", "c2": "#FF7A59",
+    "items": ["sneaker-runner-x", "balaca-pro-air", "powerbank-10k"]
+  },
+  {
+    "id": "bundle-tech", "nombre": "Bundle Tech", "descripcion": "Audífonos + Cargador + Cable",
+    "descuento": 20, "c1": "#0A57F5", "c2": "#7A4DFF",
+    "items": ["p9-tipo-apple", "cargador-pared-20w", "cable-usbc-trenzado"]
+  },
+  {
+    "id": "bundle-home", "nombre": "Bundle Home", "descripcion": "Sábanas + Protector + Soporte",
+    "descuento": 10, "c1": "#2F6BDB", "c2": "#38D39F",
+    "items": ["sabanas-star-home", "protector-colchon", "soporte-escritorio"]
+  }
+]
