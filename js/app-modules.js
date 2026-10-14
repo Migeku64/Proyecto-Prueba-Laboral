@@ -31,6 +31,15 @@
     if (button.dataset.nav === 'buscar') document.querySelector('#mobile-search')?.focus();
   }));
 
+  // El carrito es una accion global, no una vista; ambos accesos abren el mismo dialogo.
+  document.querySelectorAll('.cart-trigger').forEach(button => {
+    button.onclick = event => {
+      event.preventDefault();
+      event.stopPropagation();
+      window.dispatchEvent(new CustomEvent('vokter:cart-open'));
+    };
+  });
+
   document.querySelector('[data-scroll-products]')?.addEventListener('click', () => setView('tienda'));
   document.querySelectorAll('.hero-drop').forEach((drop, index) => {
     if (drop.matches('a')) return;
