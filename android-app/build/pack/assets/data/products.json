@@ -1,0 +1,126 @@
+[
+  {
+    "id": "aud-01",
+    "nombre": "Auriculares NOVA Pulse",
+    "categoria": "audio",
+    "precio": 249000,
+    "oferta": true,
+    "precioAnterior": 319000,
+    "descripcion": "Auriculares inalámbricos con cancelación de ruido activa y 30h de batería.",
+    "stock": 14,
+    "icono": "audio"
+  },
+  {
+    "id": "aud-02",
+    "nombre": "Parlante KREW Boom",
+    "categoria": "audio",
+    "precio": 189000,
+    "oferta": false,
+    "descripcion": "Parlante portátil resistente al agua IPX6, sonido 360°.",
+    "stock": 9,
+    "icono": "audio"
+  },
+  {
+    "id": "cal-01",
+    "nombre": "Tenis GRYT Runner",
+    "categoria": "calzado",
+    "precio": 329000,
+    "oferta": false,
+    "descripcion": "Suela de espuma reactiva, malla transpirable, edición urbana.",
+    "stock": 22,
+    "icono": "calzado"
+  },
+  {
+    "id": "cal-02",
+    "nombre": "Botas URBN Trek",
+    "categoria": "calzado",
+    "precio": 279000,
+    "oferta": true,
+    "precioAnterior": 349000,
+    "descripcion": "Botas impermeables con suela antideslizante para ciudad.",
+    "stock": 7,
+    "icono": "calzado"
+  },
+  {
+    "id": "ropa-01",
+    "nombre": "Chaqueta KREW Shell",
+    "categoria": "apparel",
+    "precio": 219000,
+    "oferta": false,
+    "descripcion": "Cortavientos técnico con bolsillos sellados y capucha ajustable.",
+    "stock": 11,
+    "icono": "apparel"
+  },
+  {
+    "id": "ropa-02",
+    "nombre": "Hoodie NOVA Grid",
+    "categoria": "apparel",
+    "precio": 139000,
+    "oferta": false,
+    "descripcion": "Hoodie de algodón pesado con estampado reflectivo.",
+    "stock": 30,
+    "icono": "apparel"
+  },
+  {
+    "id": "gad-01",
+    "nombre": "Power Bank VOLT 20K",
+    "categoria": "gadgets",
+    "precio": 129000,
+    "oferta": true,
+    "precioAnterior": 159000,
+    "descripcion": "20.000 mAh, carga rápida 65W, doble puerto USB-C.",
+    "stock": 18,
+    "icono": "gadgets"
+  },
+  {
+    "id": "gad-02",
+    "nombre": "Cable TRAX USB-C 2m",
+    "categoria": "gadgets",
+    "precio": 39000,
+    "oferta": false,
+    "descripcion": "Cable trenzado reforzado, carga rápida 100W.",
+    "stock": 45,
+    "icono": "gadgets"
+  },
+  {
+    "id": "gad-03",
+    "nombre": "Smartwatch PULSE X",
+    "categoria": "gadgets",
+    "precio": 349000,
+    "oferta": false,
+    "descripcion": "Monitor de ritmo cardíaco, GPS y batería de 7 días.",
+    "stock": 6,
+    "icono": "gadgets"
+  },
+  {
+    "id": "hog-01",
+    "nombre": "Lámpara LOOP LED",
+    "categoria": "hogar",
+    "precio": 89000,
+    "oferta": false,
+    "descripcion": "Lámpara de escritorio regulable con carga inalámbrica en la base.",
+    "stock": 16,
+    "icono": "hogar"
+  },
+  {
+    "id": "game-01",
+    "nombre": "Control ARC Wireless",
+    "categoria": "gaming",
+    "precio": 169000,
+    "oferta": true,
+    "precioAnterior": 199000,
+    "descripcion": "Control inalámbrico multiplataforma con gatillos programables.",
+    "stock": 13,
+    "icono": "gaming"
+  },
+  {
+    "id": "game-02",
+    "nombre": "Soporte GRID Console",
+    "categoria": "gaming",
+    "precio": 59000,
+    "oferta": false,
+    "descripcion": "Soporte vertical con ventilación para consolas de nueva generación.",
+    "stock": 20,
+    "icono": "gaming"
+  }
+]

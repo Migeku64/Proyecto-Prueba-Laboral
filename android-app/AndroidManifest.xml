@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.krew.mobile" android:versionCode="2" android:versionName="1.1.0">
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application android:theme="@style/AppTheme" android:label="VOKTER" android:icon="@drawable/vokter_mark" android:roundIcon="@drawable/vokter_mark" android:usesCleartextTraffic="true" android:resizeableActivity="true">
+        <activity android:name=".MainActivity" android:screenOrientation="portrait" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
