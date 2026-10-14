@@ -770,6 +770,15 @@ html[data-theme="dark"] .store-nav-item:not(.active) {
   cursor: pointer;
 }
 
+.hero-drop[role="button"] {
+  cursor: pointer;
+}
+
+.hero-drop:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, .9);
+  outline-offset: 3px;
+}
+
 /* Keep bundle contents and pricing from colliding. */
 .bundle-card {
   min-height: 410px;
