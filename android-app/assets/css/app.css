@@ -733,6 +733,37 @@ html[data-theme="dark"] .mobile-product .product-visual .favorite {
   color: #53688f;
 }
 
+/* Bottom navigation contrast for both themes. */
+.store-nav-item.active {
+  background: #e8efff;
+  color: #0a57f5;
+  box-shadow: 0 5px 14px rgba(10, 87, 245, .12);
+}
+
+.store-nav-item.active > span,
+.store-nav-item.active em {
+  color: #0a57f5;
+}
+
+html[data-theme="dark"] .store-nav-item.active {
+  background: #263d70;
+  color: #ffffff;
+  box-shadow: 0 5px 16px rgba(10, 87, 245, .28);
+}
+
+html[data-theme="dark"] .store-nav-item.active > span {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .store-nav-item:not(.active) {
+  color: #aab7d5;
+}
+
+.store-nav-item:focus-visible {
+  outline: 3px solid rgba(10, 87, 245, .45);
+  outline-offset: 2px;
+}
+
 /* Keep bundle contents and pricing from colliding. */
 .bundle-card {
   min-height: 410px;
