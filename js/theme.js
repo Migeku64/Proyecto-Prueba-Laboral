@@ -1,46 +1,42 @@
-// theme.js — maneja el modo oscuro/claro con persistencia en localStorage
-(function () {
-  const STORAGE_KEY = "krew-theme";
-  const root = document.documentElement;
+// theme.js — claro por defecto; el oscuro es una opción del usuario y se recuerda.
+// (Cada HTML trae un script mínimo en <head> que aplica el tema guardado antes de pintar,
+// para que no haya parpadeo.)
+import { icon } from './icons.js';
 
-  function applyTheme(theme) {
-    if (theme === "dark") {
-      root.setAttribute("data-theme", "dark");
-    } else {
-      root.removeAttribute("data-theme");
-    }
-    const btn = document.querySelector("[data-theme-toggle]");
-    if (btn) {
-      btn.textContent = theme === "dark" ? "☀" : "☾";
-      btn.setAttribute(
-        "aria-label",
-        theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"
-      );
-    }
+const KEY = 'vokter-theme';
+const root = document.documentElement;
+
+export function getTheme() {
+  try { return localStorage.getItem(KEY) === 'dark' ? 'dark' : 'light'; }
+  catch { return 'light'; }
+}
+
+function apply(theme, button) {
+  if (theme === 'dark') root.setAttribute('data-theme', 'dark');
+  else root.removeAttribute('data-theme');
+
+  if (button) {
+    button.innerHTML = theme === 'dark' ? icon('sun') : icon('moon');
+    button.setAttribute('aria-label', theme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro');
+    button.setAttribute('aria-pressed', String(theme === 'dark'));
   }
+}
 
-  function getPreferredTheme() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return saved;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  }
+export function initTheme(button) {
+  apply(getTheme(), button);
+  if (!button) return;
 
-  function init() {
-    const current = getPreferredTheme();
-    applyTheme(current);
+  button.addEventListener('click', () => {
+    const next = root.hasAttribute('data-theme') ? 'light' : 'dark';
+    try { localStorage.setItem(KEY, next); } catch { /* sin almacenamiento */ }
 
-    const btn = document.querySelector("[data-theme-toggle]");
-    if (btn) {
-      btn.addEventListener("click", () => {
-        const isDark = root.getAttribute("data-theme") === "dark";
-        const next = isDark ? "light" : "dark";
-        localStorage.setItem(STORAGE_KEY, next);
-        applyTheme(next);
-      });
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", init);
-})();
+    // Transición suave de color entre temas
+    root.classList.add('theme-fade');
+    apply(next, button);
+    button.animate(
+      [{ transform: 'rotate(-90deg) scale(.6)' }, { transform: 'rotate(0) scale(1)' }],
+      { duration: 450, easing: 'cubic-bezier(.22,1,.36,1)' }
+    );
+    setTimeout(() => root.classList.remove('theme-fade'), 500);
+  });
+}
