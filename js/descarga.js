@@ -13,6 +13,8 @@ const APK_URL = 'https://migeku64.github.io/Proyecto-Prueba-Laboral/descargas/vo
 const data = await initLayout();
 
 $('#dl-btn').href = APK_URL;
+$('#dl-btn').setAttribute('download', 'vokter.apk');
+document.querySelector('.dl-meta')?.replaceChildren(document.createTextNode('Android - vokter.apk - instalacion manual'));
 const qrImage = document.querySelector('[data-download-qr] img');
 if (qrImage) {
   const qrLink = document.createElement('a');
