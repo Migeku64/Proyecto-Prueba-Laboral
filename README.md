@@ -1,90 +1,115 @@
-# VOKTER — Plataforma web
+# VOKTER
 
-Plataforma web de **VOKTER**, ecosistema premium de rendimiento y tecnología urbana (sneakers, gadgets y gear esencial). Es la propuesta de aplicación web para la evaluación técnica; la aplicación móvil complementaria se descarga desde la propia web.
+Tienda web y aplicacion movil de demostracion para productos de tecnologia urbana, audio, accesorios, footwear y bundles.
 
-> Referencia analizada: https://vokter-five.vercel.app/
+## Funcionalidades
 
-## Qué propone esta versión
+- Inicio con hero, categorias, destacados y beneficios.
+- Navegacion por modulos: Inicio, Tienda, Categorias, Bundles y Ayuda.
+- Busqueda y filtrado de productos por categoria.
+- Productos con favoritos y boton para agregar al carrito.
+- Carrito accesible desde el menu superior y el menu inferior.
+- Carrito persistente con `localStorage`, contador sincronizado, cantidades, eliminar productos y total actualizado.
+- Panel del carrito con imagen o icono del producto, controles `+` y `-` y estado de envio gratis.
+- Bundles Running, Tech y Home. Cada bundle agrega sus productos al carrito y muestra precio normal, descuento y ahorro.
+- Checkout de demostracion sin cobros reales.
+- Modo claro y modo oscuro con preferencia guardada.
+- Animaciones respetando `prefers-reduced-motion`.
+- Pagina de descarga con boton y codigo QR para la APK.
 
-La referencia ofrece catálogo, categorías, destacados, bundles y ayuda. Esta propuesta conserva ese contenido y lo convierte en una **plataforma** más dinámica, con una experiencia inspirada en las tiendas de consola (carrusel principal, filas de categorías y un foco que resalta lo seleccionado):
+## Tecnologias
 
-- **Foco tipo consola:** la tarjeta bajo el cursor (o el foco del teclado) sube y brilla mientras las demás se atenúan. Se puede recorrer el catálogo con las **flechas del teclado**.
-- **Carrusel principal** con miniaturas que se llenan como barra de progreso, pausa al pasar el cursor, cambio de color de fondo por diapositiva, parallax y deslizamiento táctil.
-- **Menú de categorías** desplegable, **buscador rápido** (`/` o `Ctrl/Cmd + K`) con resultados en vivo y navegación con flechas.
-- **Tienda** con búsqueda en vivo (sin importar tildes), pestañas por categoría con indicador deslizante y filtros combinables: marca, precio máximo, calificación mínima, solo ofertas y solo nuevos. Los filtros activos se muestran como chips removibles y la URL se sincroniza (`?cat=audio&q=...`).
-- **Carrito lateral** con persistencia, cantidades, barra de progreso hacia el **envío gratis desde $50.000** y checkout de demostración.
-- **Bundles** (Running 15%, Tech 20%, Home 10%) que se agregan completos al carrito con el descuento aplicado.
-- **Ficha de producto** con selector de color (el degradado cambia con transición), inclinación 3D, cantidad, pestañas y productos relacionados.
-- **Modo claro por defecto** y modo oscuro opcional (se recuerda la elección).
-- **Descarga de la app móvil:** página dedicada con botón de descarga y código QR.
-- Centro de ayuda (FAQ, envíos, devoluciones, términos) y contacto.
+- HTML5
+- CSS3 con variables, responsive design y animaciones
+- JavaScript moderno sin frameworks ni proceso de compilacion
+- SVG para iconos y elementos de marca
+- Android WebView para la aplicacion movil
 
-## Identidad visual
+## Estructura principal
 
-| Rol | Valor |
-| --- | --- |
-| Azul VOKTER (acción principal) | `#0A57F5` |
-| Violeta señal (degradados) | `#7A4DFF` |
-| Amarillo oferta | `#FFC931` |
-| Tinta marino (texto / footer) | `#0A1128` |
-| Fondo claro | `#F1F5FC` |
-
-Cada categoría tiene su propio degradado, que se reutiliza en tarjetas, menú, carrito y ficha para dar coherencia de marca. Tipografías: **Unbounded** (títulos) y **Manrope** (texto), vía Google Fonts.
-
-## Tecnologías
-
-- HTML5, CSS3 (variables, `@property` para transiciones de degradados, `color-mix`, `:has`) y JavaScript moderno con **módulos ES**.
-- Sin frameworks ni build: se ejecuta como sitio estático.
-- Ilustraciones de producto en SVG propio (sin imágenes externas). Para usar fotos reales basta con reemplazar el SVG de `components.js`.
-
-## Estructura
-
-```
-├── index.html · catalogo.html · producto.html · ayuda.html · contacto.html · descarga.html
-├── css/styles.css          # tokens de marca, componentes e interacciones
-├── js/
-│   ├── main.js             # home: carrusel, categorías, destacados, bundles
-│   ├── catalogo.js         # tienda: búsqueda, filtros, orden
-│   ├── producto.js         # ficha de producto
-│   ├── ayuda.js · contacto.js · descarga.js
-│   ├── layout.js           # header, mega menú, carrito, buscador, checkout, footer (compartido)
-│   ├── components.js       # tarjeta de producto, bundle, esqueletos, teléfono
-│   ├── cart.js             # estado del carrito (localStorage)
-│   ├── ui.js               # toast, indicador deslizante, navegación con flechas, vuelo al carrito
-│   ├── theme.js · icons.js · utils.js
-├── data/                   # products.json · categories.json · bundles.json
-└── assets/qr-app.png       # QR de descarga de la app
+```text
+app.html                 Aplicacion movil web de VOKTER
+index.html               Pagina principal de la web
+catalogo.html            Catalogo completo
+producto.html            Detalle de producto
+ayuda.html               Centro de ayuda
+descarga.html            Descarga y QR de la APK
+app.webmanifest          Configuracion PWA
+sw.js                    Service worker
+css/app.css              Estilos de la aplicacion movil
+css/styles.css            Estilos de la web principal
+js/commerce.js           Productos, favoritos y carrito movil
+js/app-modules.js        Navegacion por modulos y bundles
+js/cart.js               Estado del carrito de la web principal
+js/descarga.js            Enlace y QR de descarga
+data/products.json       Catalogo de productos
+assets/qr-app.png        Codigo QR de VOKTER
+descargas/vokter.apk     APK actual
+android-app/              Proyecto Android WebView
 ```
 
-El header, el footer, el carrito y el buscador se inyectan desde `layout.js`, así que cada página solo define su contenido.
+## Ejecutar localmente
 
-## Ejecutar en local
-
-Los datos se cargan con `fetch`, por lo que hay que servir la carpeta (no abrir el HTML con doble clic):
+El proyecto usa `fetch` para cargar el catalogo, por lo que debe ejecutarse mediante un servidor local:
 
 ```bash
 python -m http.server 8080
-# luego abrir http://localhost:8080
 ```
 
-También sirve la extensión *Live Server* de VS Code o `npx serve .`.
+Luego abre:
 
-## Descarga de la app móvil
-
-Mecanismo: **botón + código QR** en `descarga.html` (enlazada desde el menú y la home). Ambos apuntan al APK publicado como asset de un **GitHub Release**:
-
-```
-https://github.com/Migeku64/Proyecto-Prueba-Laboral/releases/latest/download/app-release.apk
+```text
+http://localhost:8080
 ```
 
-Para publicar la app: *Releases → Draft a new release → adjuntar el archivo con el nombre `app-release.apk` → Publish*. El enlace `latest/download/...` siempre apunta a la versión más reciente, así que no hay que tocar la web al actualizar el APK. Si cambia el nombre del archivo o el repositorio, actualizar `APK_URL` en `js/descarga.js` y regenerar `assets/qr-app.png`.
+Tambien puedes usar Live Server de VS Code.
 
-## Consideraciones
+## APK y descarga
 
-- El catálogo, las descripciones y los textos de ayuda son **datos de demostración** (los 8 productos destacados y los precios parten de la referencia). El checkout no cobra ni envía datos.
-- Accesibilidad: foco visible, navegación completa por teclado, etiquetas ARIA en carrusel/pestañas y respeto de `prefers-reduced-motion`.
-- Siguiente paso natural: conectar el catálogo y el carrito a una API real compartida con la app móvil.
+La APK actual se encuentra en:
+
+```text
+descargas/vokter.apk
+```
+
+La web utiliza esta URL publica:
+
+```text
+https://migeku64.github.io/Proyecto-Prueba-Laboral/descargas/vokter.apk
+```
+
+El boton y el QR de `descarga.html` apuntan al mismo archivo. Para publicar una nueva version, reemplaza `descargas/vokter.apk` en el repositorio y vuelve a publicar GitHub Pages.
+
+## Android
+
+La aplicacion usa un WebView local con etiqueta e identidad visual VOKTER. El paquete tecnico actual es `com.krew.mobile`, con nombre visible `VOKTER`.
+
+Configuracion actual:
+
+- `minSdkVersion`: 21
+- `targetSdkVersion`: 35
+- `versionCode`: 2
+- `versionName`: 1.1.0
+- Icono: `android-app/res/drawable/vokter_mark.xml`
+
+La APK debe estar firmada para instalarse en Android. Un archivo HTML no es una APK instalable por si solo.
+
+## Datos de demostracion
+
+El catalogo, precios, favoritos, carrito y checkout son demostrativos. El checkout no realiza cobros ni envia pedidos reales.
+
+## Identidad visual
+
+- Azul VOKTER: `#0A57F5`
+- Violeta: `#7A4DFF`
+- Amarillo de oferta: `#FFC931`
+- Fondo claro: `#F1F5FC`
+- Fondo oscuro: `#0A0F1F`
+
+## Publicacion
+
+El sitio puede publicarse como pagina estatica en GitHub Pages. Antes de publicar una nueva APK, verifica que el archivo conserve el nombre `vokter.apk` y que el QR siga apuntando a la ruta publica correcta.
 
 ## Autores
 
-Web: _[tu nombre]_ · App móvil: _[nombre de tu compañero]_
+VOKTER - Proyecto de demostracion laboral.
