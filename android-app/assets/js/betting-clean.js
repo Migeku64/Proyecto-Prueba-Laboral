@@ -127,7 +127,9 @@
   }
 
   function init() {
+    $$('img[src="assets/app.png"]').forEach(image => image.src = 'assets/f360-logo.png');
     catalog.render(); slip.render(); renderHistory(); setupNavigation(); setupEvents(); setupAccount(); setupAuthAndTheme();
+    $$('.reveal').forEach(item => item.classList.add('visible'));
     on('#close-slip', 'click', closePanels); on('#scrim', 'click', closePanels); $$('[data-close-panel]').forEach(button => on(button, 'click', closePanels)); on('#place-bet', 'click', () => slip.confirm()); on('#stake', 'input', () => slip.render());
     const profile = read(keys.profile, null); if (profile) { $('#profile-title').textContent = profile.name; $('#profile-name').value = profile.name; $('#profile-email').value = profile.email; }
     const splash = $('#app-splash'); if (splash) setTimeout(() => splash.classList.add('is-hidden'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 250 : 1500);
