@@ -1,7 +1,7 @@
 // layout.js — todo lo que se repite en cada página: header, mega menú, carrito lateral,
 // buscador rápido, checkout simulado y footer. Cada página solo escribe su <main>.
 import { $, $$, loadData, formatPrice, currentPage, escapeHTML, norm } from './utils.js';
-import { art, icon } from './icons.js';
+import { art, productArt, icon } from './icons.js';
 import { initTheme } from './theme.js';
 import { cart, FREE_SHIPPING_FROM } from './cart.js';
 import { bindIndicator, toast, bumpCart } from './ui.js';
@@ -285,7 +285,7 @@ export async function initLayout() {
     } else {
       lines.innerHTML = items.map((i) => `
         <div class="line${previousKeys.has(i.key) ? '' : ' is-new'}" data-key="${escapeHTML(i.key)}">
-          <div class="line-thumb" style="--c1:${i.c1};--c2:${i.c2}">${art(i.arte)}</div>
+          <div class="line-thumb" style="--c1:${i.c1};--c2:${i.c2}">${productArt(i)}</div>
           <div class="line-info">
             <strong>${escapeHTML(i.nombre)}</strong>
             <span>${escapeHTML(i.variante || i.detalle || '')}</span>
@@ -407,7 +407,7 @@ export async function initLayout() {
       ? results.map((p, k) => {
           const c = dataRef.catMap[p.categoria];
           return `<a class="sr-item${k === 0 ? ' active' : ''}" role="option" aria-selected="${k === 0}" href="producto.html?id=${p.id}">
-            <span class="sr-thumb" style="--c1:${c.c1};--c2:${c.c2}">${art(p.arte)}</span>
+            <span class="sr-thumb" style="--c1:${c.c1};--c2:${c.c2}">${productArt(p)}</span>
             <span class="sr-info"><strong>${escapeHTML(p.nombre)}</strong><span>${escapeHTML(c.nombre)}</span></span>
             <span class="sr-price">${formatPrice(p.precio)}</span>
           </a>`;

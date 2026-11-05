@@ -1,5 +1,5 @@
 // components.js — piezas de interfaz reutilizables entre páginas
-import { art, icon, starIcon } from './icons.js';
+import { art, productArt, icon, starIcon } from './icons.js';
 import { formatPrice, discountPercent, escapeHTML, bundleTotals } from './utils.js';
 import { cart } from './cart.js';
 import { toast, flyToCart } from './ui.js';
@@ -20,7 +20,7 @@ export function productCard(p, index, catMap) {
   <article class="card" style="--c1:${cat.c1};--c2:${cat.c2};--i:${index}">
     <div class="card-media">
       <div class="badges">${badges.join('')}</div>
-      ${art(p.arte)}
+      ${productArt(p)}
     </div>
     <div class="card-body">
       <span class="card-brand">${escapeHTML(p.marca)}</span>
@@ -64,7 +64,7 @@ export function bundleCard(bundle, prodMap, index) {
     <h3>${escapeHTML(bundle.nombre)}</h3>
     <p>${escapeHTML(bundle.descripcion)}</p>
     <div class="bundle-arts" aria-hidden="true">
-      ${items.map((p, k) => `<span class="bundle-art" style="--k:${k}">${art(p.arte)}</span>`).join('')}
+      ${items.map((p, k) => `<span class="bundle-art" style="--k:${k}">${productArt(p)}</span>`).join('')}
     </div>
     <ul class="bundle-items">${items.map((p) => `<li>${escapeHTML(p.nombre)}</li>`).join('')}</ul>
     <div class="bundle-foot">
@@ -82,7 +82,7 @@ export function bindAddActions(root, { prodMap, catMap, bundles = [] }) {
       const p = prodMap[addBtn.dataset.add];
       if (!p) return;
       const cat = catMap[p.categoria];
-      cart.add({ id: p.id, nombre: p.nombre, precio: p.precio, arte: p.arte, c1: cat.c1, c2: cat.c2 });
+      cart.add({ id: p.id, nombre: p.nombre, precio: p.precio, arte: p.arte, imagen: p.imagen, c1: cat.c1, c2: cat.c2 });
       flyToCart(addBtn, cat.c1, cat.c2);
       addBtn.classList.add('done');
       addBtn.innerHTML = icon('check', 20);
@@ -101,6 +101,7 @@ export function bindAddActions(root, { prodMap, catMap, bundles = [] }) {
         nombre: b.nombre,
         precio: total,
         arte: items[0].arte,
+        imagen: items[0].imagen,
         c1: b.c1,
         c2: b.c2,
         detalle: `${b.descuento}% de descuento incluido`
@@ -122,7 +123,7 @@ export function phoneMock({ prodMap, catMap }) {
       <div class="phone-row">
         ${picks.map((p) => `
           <div class="phone-card" style="--c1:${catMap[p.categoria].c1};--c2:${catMap[p.categoria].c2}">
-            <span>${art(p.arte)}</span>${escapeHTML(p.nombre)}<b>${formatPrice(p.precio)}</b>
+            <span>${productArt(p)}</span>${escapeHTML(p.nombre)}<b>${formatPrice(p.precio)}</b>
           </div>`).join('')}
       </div>
       <div class="phone-pill">Ver el nuevo drop</div>

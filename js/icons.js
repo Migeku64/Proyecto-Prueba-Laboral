@@ -114,6 +114,13 @@ export function art(key, cls = 'art') {
   return `<svg class="${cls}" viewBox="0 0 200 200" role="img" aria-hidden="true" focusable="false">${body}</svg>`;
 }
 
+// Foto real del producto; si no tiene, se usa la ilustración de siempre.
+export function productArt(p) {
+  if (!p.imagen) return art(p.arte);
+  const alt = String(p.nombre || '').replace(/"/g, '&quot;');
+  return `<img class="product-photo" src="${p.imagen}" alt="${alt}" loading="lazy" decoding="async">`;
+}
+
 const stroke = (d, extra = '') =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${d}</svg>`;
 

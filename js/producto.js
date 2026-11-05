@@ -1,7 +1,7 @@
 // producto.js — ficha de producto (producto.html?id=...)
 import { $, $$, param, formatPrice, escapeHTML, discountPercent, COLOR_VARIANTS, reducedMotion } from './utils.js';
 import { initLayout, openCart } from './layout.js';
-import { art, icon } from './icons.js';
+import { art, productArt, icon } from './icons.js';
 import { cart, FREE_SHIPPING_FROM } from './cart.js';
 import { productCard, ratingHTML, emptyState, bindAddActions } from './components.js';
 import { bindIndicator, enableArrowNav, flyToCart, toast } from './ui.js';
@@ -47,7 +47,7 @@ function renderProduct(p) {
   pdp.innerHTML = `
     <div class="pdp-media" id="pdp-media" style="--c1:${cat.c1};--c2:${cat.c2}">
       <div class="badges">${badges}</div>
-      <div class="pdp-art" id="pdp-art">${art(p.arte)}</div>
+      <div class="pdp-art" id="pdp-art">${productArt(p)}</div>
     </div>
 
     <div class="pdp-info">
@@ -145,7 +145,7 @@ function renderProduct(p) {
 
   /* Agregar / comprar */
   const addToCart = () => cart.add({
-    id: p.id, nombre: p.nombre, precio: p.precio, arte: p.arte,
+    id: p.id, nombre: p.nombre, precio: p.precio, arte: p.arte, imagen: p.imagen,
     c1: variant.c1, c2: variant.c2, variante: variant.nombre
   }, qty);
 

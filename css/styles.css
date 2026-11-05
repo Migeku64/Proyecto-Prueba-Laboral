@@ -690,3 +690,10 @@ a.info-item:hover { transform: translateX(6px); }
   .card:hover, .cat-tile:hover, .bundle:hover { transform: none; }
 }
  .qr-link{display:inline-flex;border-radius:14px;transition:transform .25s ease,box-shadow .25s ease}.qr-link:hover,.qr-link:focus-visible{transform:translateY(-3px);box-shadow:0 12px 24px rgba(10,87,245,.2);outline:0}.qr-link img{display:block;border-radius:10px}
+
+/* Fotos reales de producto */
+.product-photo { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.card-media .product-photo { position: absolute; inset: 0; border-radius: 0; transition: transform .6s var(--ease); }
+@media (hover: hover) { .card:hover .card-media .product-photo { transform: scale(1.06); } }
+.pdp-art .product-photo { aspect-ratio: 1; border-radius: 28px; box-shadow: 0 36px 40px rgba(0, 0, 0, .28); }
+.line-thumb, .sr-thumb, .bundle-art, .phone-card span { overflow: hidden; }
