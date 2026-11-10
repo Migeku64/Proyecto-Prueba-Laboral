@@ -199,6 +199,20 @@
     input.replaceWith(select);
   }
 
+  function convertPhoneField(container, id, countryId) {
+    const input = $(`#${id}`, container);
+    if (!input) return;
+    const codes = { Colombia: '+57', Argentina: '+54', Chile: '+56', Ecuador: '+593', Mexico: '+52', Peru: '+51', Venezuela: '+58' };
+    const control = document.createElement('div');
+    control.className = 'phone-control';
+    control.innerHTML = `<select id="${id}-code" aria-label="Código de país"><option value="+57">+57</option><option value="+54">+54</option><option value="+56">+56</option><option value="+593">+593</option><option value="+52">+52</option><option value="+51">+51</option><option value="+58">+58</option></select>`;
+    input.type = 'tel'; input.inputMode = 'numeric'; input.pattern = '[0-9]*'; input.maxLength = 15; input.placeholder = '300 000 0000'; input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, ''); });
+    control.appendChild(input); input.replaceWith(control);
+    const country = $(`#${countryId}`, container); const code = $(`#${id}-code`, container);
+    const syncCode = () => { if (codes[country?.value]) code.value = codes[country.value]; };
+    country?.addEventListener('change', syncCode); syncCode();
+  }
+
   function bindLocationSelectors(container, countryId, cityId) {
     const country = $(`#${countryId}`, container);
     const city = $(`#${cityId}`, container);
@@ -231,6 +245,7 @@
     convertToSelect(extras, 'register-city', ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Cartagena', 'Bucaramanga', 'Pereira', 'Otra ciudad']);
     convertToSelect(extras, 'register-country', ['Colombia', 'Argentina', 'Chile', 'Ecuador', 'Mexico', 'Peru', 'Venezuela', 'Otro pais']);
     bindLocationSelectors(extras, 'register-country', 'register-city');
+    convertPhoneField(extras, 'register-phone', 'register-country');
     submit ? form.insertBefore(terms, submit) : form.appendChild(terms);
     submit ? form.insertBefore(adult, submit) : form.appendChild(adult);
   }
@@ -262,7 +277,7 @@
       $('#profile-email').value = profile.email || '';
       const values = { 'profile-username': profile.username || '', 'profile-first-name': profile.firstName || '', 'profile-last-name': profile.lastName || '', 'profile-phone': profile.phone || '', 'profile-country': profile.country || 'Colombia', 'profile-birth-date': profile.birthDate || '' };
       Object.entries(values).forEach(([id, value]) => { const input = $(`#${id}`); if (input) input.value = value; });
-      const country = $('#profile-country'); const city = $('#profile-city'); if (country && city) { country.dispatchEvent(new Event('change')); if ([...city.options].some(option => option.value === profile.city)) city.value = profile.city; }
+      const country = $('#profile-country'); const city = $('#profile-city'); if (country && city) { country.dispatchEvent(new Event('change')); if ([...city.options].some(option => option.value === profile.city)) city.value = profile.city; } if ($('#profile-phone-code') && profile.phoneCode) $('#profile-phone-code').value = profile.phoneCode;
     }
     let stats = $('#profile-stats');
     if (!stats) { stats = document.createElement('div'); stats.id = 'profile-stats'; form?.after(stats); }
@@ -284,6 +299,21 @@
     convertToSelect(extras, 'profile-city', ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Cartagena', 'Bucaramanga', 'Pereira', 'Otra ciudad']);
     convertToSelect(extras, 'profile-country', ['Colombia', 'Argentina', 'Chile', 'Ecuador', 'Mexico', 'Peru', 'Venezuela', 'Otro pais']);
     bindLocationSelectors(extras, 'profile-country', 'profile-city');
+    convertPhoneField(extras, 'profile-phone', 'profile-country');
+  }
+
+  function profileFromForm() {
+    const old = read(keys.profile, {});
+    return { ...old, name: $('#profile-name').value, email: $('#profile-email').value, username: $('#profile-username')?.value || old.username || $('#profile-name').value, firstName: $('#profile-first-name')?.value || old.firstName || '', lastName: $('#profile-last-name')?.value || old.lastName || '', phone: $('#profile-phone')?.value || old.phone || '', phoneCode: $('#profile-phone-code')?.value || old.phoneCode || '+57', city: $('#profile-city')?.value || old.city || '', country: $('#profile-country')?.value || old.country || 'Colombia', birthDate: $('#profile-birth-date')?.value || old.birthDate || '' };
+  }
+
+  function showProfileConfirmation(profile) {
+    let box = $('#profile-confirmation');
+    if (!box) { box = document.createElement('div'); box.id = 'profile-confirmation'; box.className = 'profile-confirmation'; $('#profile-form')?.appendChild(box); }
+    box.innerHTML = '<strong>¿Guardar cambios?</strong><small>Confirma para actualizar tus datos.</small><div><button type="button" class="confirm-save" id="confirm-profile-save">✓ Confirmar</button><button type="button" class="cancel-save" id="cancel-profile-save">× Cancelar</button></div>';
+    box.classList.add('show');
+    on('#confirm-profile-save', 'click', () => { write(keys.profile, profile); renderProfile(profile); box.classList.remove('show'); closePanels(); toast('Perfil actualizado correctamente'); });
+    on('#cancel-profile-save', 'click', () => { renderProfile(read(keys.profile, null)); box.classList.remove('show'); toast('Cambios cancelados'); });
   }
 
   function setupProfileIcons() {
@@ -324,7 +354,7 @@
     on('#profile-form', 'submit', event => { event.preventDefault(); const old = read(keys.profile, {}); const profile = { ...old, name: $('#profile-name').value, email: $('#profile-email').value, username: $('#profile-username')?.value || old.username || $('#profile-name').value, firstName: $('#profile-first-name')?.value || old.firstName || '', lastName: $('#profile-last-name')?.value || old.lastName || '', phone: $('#profile-phone')?.value || old.phone || '', city: $('#profile-city')?.value || old.city || '', country: $('#profile-country')?.value || old.country || '', birthDate: $('#profile-birth-date')?.value || old.birthDate || '' }; write(keys.profile, profile); renderProfile(profile); closePanels(); toast('Perfil guardado correctamente'); });
     $$('[data-bet-tab]').forEach(tab => on(tab, 'click', () => { $$('[data-bet-tab]').forEach(item => item.classList.toggle('active', item === tab)); renderHistory(); }));
     on('#logout-button', 'click', () => { state.authenticated = false; sessionStorage.removeItem(keys.session); const authButton = $('#auth-button'); if (authButton) { authButton.textContent = 'Iniciar sesion'; authButton.classList.remove('is-authenticated'); } closePanels(); $('#auth-screen')?.classList.remove('is-hidden'); toast('Sesion cerrada'); });
-    setupExtendedProfile(); renderProfile(); refresh();
+    setupExtendedProfile(); on('#profile-form', 'submit', event => { event.preventDefault(); event.stopImmediatePropagation(); showProfileConfirmation(profileFromForm()); }, true); renderProfile(); refresh();
   }
 
   function setupAuthAndTheme() {
