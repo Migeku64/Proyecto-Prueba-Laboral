@@ -1,0 +1,40 @@
+/* Detalle de partido: panel completo y desplazamiento interno */
+.match-panel {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.match-panel .match-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  flex: 0 0 auto;
+}
+
+.match-panel .scoreboard,
+.match-panel .match-stats,
+.match-panel .detail-market-tabs,
+.match-panel .detail-meta,
+.match-panel .detail-markets {
+  flex: 0 0 auto;
+}
+
+.match-panel .detail-markets {
+  overflow: visible;
+  padding-bottom: 34px;
+}
+
+.match-panel .detail-market-tabs {
+  position: sticky;
+  top: 68px;
+  z-index: 4;
+  background: #0b1119;
+}
+
+.theme-light .match-panel .detail-market-tabs {
+  background: #f4f8fa;
+}
