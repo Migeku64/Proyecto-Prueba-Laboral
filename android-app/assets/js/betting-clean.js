@@ -375,12 +375,12 @@
     setupProfileIcons();
     setupSocialButtons();
     catalog.render(); slip.render(); renderHistory(); setupNavigation(); setupEvents(); setupAccount(); setupAuthAndTheme();
-    loadRealMatches().catch(() => { updateLiveTicker(); toast('No se pudo actualizar el calendario; mostrando partidos de respaldo.'); });
+    setTimeout(() => loadRealMatches().catch(() => { updateLiveTicker(); toast('No se pudo actualizar el calendario; mostrando partidos de respaldo.'); }), 120);
     setInterval(() => loadRealMatches({ liveOnly: true }).catch(() => updateLiveTicker()), 30000);
     $$('.reveal').forEach(item => item.classList.add('visible'));
     on('#close-slip', 'click', closePanels); on('#scrim', 'click', closePanels); $$('[data-close-panel]').forEach(button => on(button, 'click', closePanels)); on('#place-bet', 'click', () => slip.confirm()); on('#stake', 'input', () => slip.render());
     const profile = read(keys.profile, null); if (profile) { $('#profile-title').textContent = profile.name; $('#profile-name').value = profile.name; $('#profile-email').value = profile.email; }
-    const splash = $('#app-splash'); if (splash) setTimeout(() => splash.classList.add('is-hidden'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 250 : 1500);
+    const splash = $('#app-splash'); if (splash) setTimeout(() => splash.classList.add('is-hidden'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 180 : 650);
   }
 
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init, { once: true }) : init();

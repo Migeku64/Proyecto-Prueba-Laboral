@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.fanaticos.fanaticos360" android:versionCode="38" android:versionName="3.10.1">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.fanaticos.fanaticos360" android:versionCode="39" android:versionName="3.10.2">
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36" />
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:theme="@style/AppTheme" android:label="Fanaticos 360" android:icon="@drawable/f360_logo" android:roundIcon="@drawable/f360_logo" android:usesCleartextTraffic="true" android:resizeableActivity="true">
