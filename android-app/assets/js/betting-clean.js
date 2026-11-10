@@ -122,6 +122,10 @@
     alert._timer = setTimeout(() => alert.classList.remove('show'), 4200);
   }
 
+  function updateBonusVisibility() {
+    $('.promo-card')?.classList.toggle('is-hidden', localStorage.getItem('fanaticos-bonus-claimed') === 'true');
+  }
+
   function renderPopular() {
     const list = $('#popular-list');
     if (!list) return;
@@ -356,13 +360,13 @@
   function setupAccount() {
     const refresh = () => { $('#balance-amount').textContent = money(state.balance); $('#deposit-balance').textContent = money(state.balance); };
     on('#deposit-button', 'click', () => { refresh(); openPanel($('#deposit-panel')); });
-    $$('[data-action="bonus"]').forEach(button => on(button, 'click', () => { if (!state.authenticated) return promptLogin('Inicia sesión para reclamar el bono de bienvenida.'); if (localStorage.getItem('fanaticos-bonus-claimed') === 'true') return toast('El bono de bienvenida ya fue utilizado.'); const bonus = 100000; state.balance += bonus; localStorage.setItem(keys.balance, state.balance); localStorage.setItem('fanaticos-bonus-claimed', 'true'); refresh(); toast('Bono de bienvenida agregado: $ 100.000'); }));
+    $$('[data-action="bonus"]').forEach(button => on(button, 'click', () => { if (!state.authenticated) return promptLogin('Inicia sesión para reclamar el bono de bienvenida.'); if (localStorage.getItem('fanaticos-bonus-claimed') === 'true') return updateBonusVisibility(); const bonus = 100000; state.balance += bonus; localStorage.setItem(keys.balance, state.balance); localStorage.setItem('fanaticos-bonus-claimed', 'true'); updateBonusVisibility(); refresh(); toast('Bono de bienvenida agregado: $ 100.000'); }));
     $$('[data-amount]').forEach(button => on(button, 'click', () => { $$('[data-amount]').forEach(item => item.classList.remove('active')); button.classList.add('active'); $('#deposit-amount').value = button.dataset.amount; }));
     on('#confirm-deposit', 'click', () => { const amount = Number($('#deposit-amount')?.value) || 0; if (amount < 1000) return toast('Ingresa un monto minimo de $1.000'); state.balance += amount; localStorage.setItem(keys.balance, state.balance); refresh(); closePanels(); toast('Recarga demo agregada a tu saldo'); });
     on('#profile-form', 'submit', event => { event.preventDefault(); const old = read(keys.profile, {}); const profile = { ...old, name: $('#profile-name').value, email: $('#profile-email').value, username: $('#profile-username')?.value || old.username || $('#profile-name').value, firstName: $('#profile-first-name')?.value || old.firstName || '', lastName: $('#profile-last-name')?.value || old.lastName || '', phone: $('#profile-phone')?.value || old.phone || '', city: $('#profile-city')?.value || old.city || '', country: $('#profile-country')?.value || old.country || '', birthDate: $('#profile-birth-date')?.value || old.birthDate || '' }; write(keys.profile, profile); renderProfile(profile); closePanels(); toast('Perfil guardado correctamente'); });
     $$('[data-bet-tab]').forEach(tab => on(tab, 'click', () => { $$('[data-bet-tab]').forEach(item => item.classList.toggle('active', item === tab)); renderHistory(); }));
     on('#logout-button', 'click', () => { state.authenticated = false; sessionStorage.removeItem(keys.session); const authButton = $('#auth-button'); if (authButton) { authButton.textContent = 'Iniciar sesion'; authButton.classList.remove('is-authenticated'); } closePanels(); $('#auth-screen')?.classList.remove('is-hidden'); toast('Sesion cerrada'); });
-    setupExtendedProfile(); on('#profile-form', 'submit', event => { event.preventDefault(); event.stopImmediatePropagation(); showProfileConfirmation(profileFromForm()); }, true); renderProfile(); refresh();
+    setupExtendedProfile(); on('#profile-form', 'submit', event => { event.preventDefault(); event.stopImmediatePropagation(); showProfileConfirmation(profileFromForm()); }, true); renderProfile(); updateBonusVisibility(); refresh();
   }
 
   function setupAuthAndTheme() {
