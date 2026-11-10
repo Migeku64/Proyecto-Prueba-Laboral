@@ -95,7 +95,22 @@ async function profile(user) {
           <div class="pf-orders" id="orders"><p class="pf-loading">Cargando pedidos…</p></div>
         </section>
       </div>
+
+      <div class="pf-grid">
+        <section class="pf-card" aria-labelledby="pf-mp-title">
+          <div class="pf-card-head"><h2 id="pf-mp-title">Métodos de pago</h2><span class="pf-count">${icon('shield', 14)} Protegidos</span></div>
+          <div class="pm-manager" id="pf-metodos"><p class="pf-loading">Cargando…</p></div>
+        </section>
+        <section class="pf-card" aria-labelledby="pf-hp-title">
+          <h2 id="pf-hp-title">Historial de pagos</h2>
+          <div id="pf-pagos"><p class="pf-loading">Cargando…</p></div>
+        </section>
+      </div>
     </div>`;
+  import('./payments-ui.js').then((PU) => {
+    PU.mountMetodos($('#pf-metodos'), { toast, comprador: { nombre: m.nombre || '', documento: m.documento, tipo_documento: m.tipo_documento, celular: m.celular, correo: user.email } });
+    PU.mountHistorial($('#pf-pagos'));
+  });
   $('#logout').addEventListener('click', async () => {
     try { await A.signOut(); } catch (e) { toast(e.message, 'error'); return; }
     toast('Sesión cerrada');
@@ -121,6 +136,7 @@ async function profile(user) {
           <span class="pf-addr">${icon('truck', 16)}<span>${esc(o.direccion.direccion)}, ${esc(o.direccion.barrio)} · ${esc(o.direccion.municipio)}, ${esc(o.direccion.departamento)}</span></span>
           <strong class="pf-total">${formatPrice(o.total)}</strong>
         </div>
+        ${o.estado === 'pago_pendiente' ? `<button type="button" class="btn btn-primary pf-paynow" data-paynow="${esc(o.id)}">Pagar ahora</button>` : ''}
       </article>`;
     }).join('') : `
       <div class="pf-empty">
@@ -129,6 +145,13 @@ async function profile(user) {
         <p>Cuando compres, aquí verás el estado y la dirección de cada envío.</p>
         <a class="btn btn-primary" href="catalogo.html">Explorar la tienda</a>
       </div>`;
+    $('#orders').addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-paynow]'); if (!b) return;
+      const o = orders.find((x) => x.id === b.dataset.paynow); if (!o) return;
+      const PU = await import('./payments-ui.js');
+      const cambio = await PU.pagarPendiente(o, { nombre: m.nombre || '', correo: user.email, celular: o.celular || m.celular, tipo_documento: m.tipo_documento, documento: m.documento });
+      if (cambio) profile(user);
+    });
   } catch (e) { $('#orders').innerHTML = `<p class="pf-loading">${esc(e.message)}</p>`; }
 }
 

@@ -6,6 +6,7 @@ import { initTheme } from './theme.js';
 import { cart, FREE_SHIPPING_FROM } from './cart.js';
 import { bindIndicator, toast, bumpCart } from './ui.js';
 import * as CO from './colombia.js';
+import { CONFIG } from './config.js';
 
 const NAV = [
   { href: 'index.html', label: 'Inicio', page: 'index.html' },
@@ -103,9 +104,14 @@ function footerHTML() {
           </form>
         </div>
       </div>
+      <div class="footer-company">
+        <p><strong>${escapeHTML(CONFIG.empresa.razonSocial)}</strong> · NIT ${escapeHTML(CONFIG.empresa.nit)} · ${escapeHTML(CONFIG.empresa.direccion)}, ${escapeHTML(CONFIG.empresa.ciudad)}</p>
+        <p>Servicio al cliente: ${escapeHTML(CONFIG.empresa.telefono)} · ${escapeHTML(CONFIG.empresa.correo)} · ${escapeHTML(CONFIG.empresa.horario)}</p>
+        <div class="footer-pay" aria-label="Medios de pago aceptados"><span>Medios de pago:</span><span>Visa</span><span>Mastercard</span><span>American Express</span><span>Diners</span><span>PSE</span><span>Nequi</span><span>Bancolombia</span><span>Efectivo</span></div>
+      </div>
       <div class="footer-bottom">
-        <span>© 2026 VOKTER. Todos los derechos reservados.</span>
-        <span class="footer-legal"><a href="ayuda.html#terminos">Privacidad</a><a href="ayuda.html#terminos">Términos</a></span>
+        <span>© ${new Date().getFullYear()} ${escapeHTML(CONFIG.empresa.nombreComercial)}. Todos los derechos reservados.</span>
+        <span class="footer-legal"><a href="ayuda.html#terminos">Privacidad</a><a href="ayuda.html#terminos">Términos</a><a href="ayuda.html#devoluciones">Retracto y reversión</a><a href="ayuda.html#pagos">Medios de pago</a><a href="https://www.sic.gov.co" target="_blank" rel="noopener">Superintendencia de Industria y Comercio</a></span>
       </div>
     </div>
   </footer>`;
@@ -150,7 +156,9 @@ function overlaysHTML() {
   <dialog class="modal modal-wide" id="checkout" aria-labelledby="checkout-title">
     <form method="dialog" id="checkout-form" class="au" novalidate>
       <h2 id="checkout-title">Finalizar compra</h2>
-      <p class="modal-sub">Envíos solo dentro de Colombia. Los métodos de pago se habilitarán pronto; por ahora coordinamos el pago al confirmar tu pedido.</p>
+      <ol class="ck-steps" aria-label="Pasos de la compra"><li id="ck-s1" aria-current="step"><b>1</b>Envío</li><li id="ck-s2"><b>2</b>Pago</li></ol>
+      <div id="ck-step-envio">
+      <p class="modal-sub">Envíos solo dentro de Colombia.</p>
       <div class="ck-who" id="ck-who"></div>
       <fieldset class="ck-section"><legend>Dirección de envío</legend>
         <div class="au-two">
@@ -186,14 +194,48 @@ function overlaysHTML() {
       <div class="modal-total" id="checkout-total"></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost" data-modal-cancel>Volver</button>
-        <button type="submit" class="btn btn-primary">Confirmar pedido</button>
+        <button type="submit" class="btn btn-primary">Continuar al pago</button>
+      </div>
+      </div>
+      <div id="ck-step-pago" hidden>
+        <div class="ck-summary" id="ck-summary"></div>
+        <section class="ck-order" aria-labelledby="ck-order-title">
+          <h3 id="ck-order-title">Resumen del pedido</h3>
+          <ul class="ck-lines" id="ck-lines"></ul>
+          <dl class="ck-totals" id="ck-totals"></dl>
+          <p class="ck-eta" id="ck-eta"></p>
+        </section>
+        <fieldset class="ck-section"><legend>Factura electrónica</legend>
+          <div class="ck-fact-opts" role="radiogroup">
+            <label class="ck-radio"><input type="radio" name="ck-fact" value="persona" checked><span id="ck-fact-persona">A mi nombre</span></label>
+            <label class="ck-radio"><input type="radio" name="ck-fact" value="empresa"><span>A nombre de una empresa (NIT)</span></label>
+          </div>
+          <div class="ck-fact-empresa" id="ck-fact-empresa" hidden>
+            <div class="ck-nit">
+              <div class="au-field" data-field="ck-nit"><label for="ck-nit">NIT</label><input type="text" id="ck-nit" inputmode="numeric" maxlength="10" placeholder="900123456" data-filter="digitos"><small class="au-error" id="ck-nit-error"></small></div>
+              <div class="au-field" data-field="ck-dv"><label for="ck-dv">DV</label><input type="text" id="ck-dv" inputmode="numeric" maxlength="1" data-filter="digitos"></div>
+            </div>
+            <div class="au-field" data-field="ck-rs"><label for="ck-rs">Razón social</label><input type="text" id="ck-rs" maxlength="120" autocomplete="organization"><small class="au-error" id="ck-rs-error"></small></div>
+            <div class="au-field" data-field="ck-fmail"><label for="ck-fmail">Correo para la factura</label><input type="email" id="ck-fmail" maxlength="120" autocomplete="email"><small class="au-error" id="ck-fmail-error"></small></div>
+          </div>
+          <p class="ck-note">La factura electrónica llega al correo después de confirmar el pago.</p>
+        </fieldset>
+        <fieldset class="ck-section"><legend>Método de pago</legend><div class="pm-picker" id="ck-picker"></div></fieldset>
+        <div class="au-field ck-legal" data-field="ck-acepto">
+          <label class="au-check"><input type="checkbox" id="ck-acepto">
+            <span>Acepto los <a href="ayuda.html#terminos" target="_blank" rel="noopener">términos y condiciones</a> y la <a href="ayuda.html#terminos" target="_blank" rel="noopener">política de privacidad</a>. Conozco mi <a href="ayuda.html#devoluciones" target="_blank" rel="noopener">derecho de retracto y de reversión del pago</a> (Ley 1480 de 2011).</span></label>
+          <small class="au-error" id="ck-acepto-error"></small>
+        </div>
+        <div class="modal-total" id="checkout-total-2"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="ck-back">Atrás</button>
+          <button type="submit" class="btn btn-primary" id="ck-pay">Pagar</button>
+        </div>
       </div>
     </form>
     <div class="modal-done" id="checkout-done" hidden>
-      <div class="done-check">${icon('check', 36)}</div>
-      <h2>¡Pedido recibido!</h2>
-      <p id="done-text"></p>
-      <button type="button" class="btn btn-primary" data-modal-cancel>Seguir comprando</button>
+      <div id="ck-result"></div>
+      <div class="modal-actions" id="ck-done-actions"></div>
     </div>
   </dialog>`;
 }
@@ -220,8 +262,8 @@ function searchProducts(query, { productos, catMap }) {
 
 // ---- Inicialización ---------------------------------------------------------
 export async function initLayout() {
-  if (!document.querySelector('link[href="css/auth.css"]')) {
-    document.head.insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="css/auth.css">');
+  for (const css of ['css/auth.css', 'css/payments.css']) {
+    if (!document.querySelector(`link[href="${css}"]`)) document.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" href="${css}">`);
   }
   document.body.insertAdjacentHTML('afterbegin', headerHTML());
   document.body.insertAdjacentHTML('beforeend', footerHTML() + overlaysHTML());
@@ -364,12 +406,16 @@ export async function initLayout() {
     }
   });
 
-  // -- Checkout: exige cuenta verificada y dirección colombiana válida --
+  // -- Checkout en 2 pasos: envío (dirección colombiana) y pago (pasarela). Exige cuenta verificada. --
   const dialog = $('#checkout');
   const form = $('#checkout-form');
   const done = $('#checkout-done');
   $$('[data-filter]', form).forEach((el) => CO.filtrarEntrada(el, el.dataset.filter));
   let buyer = null;
+  let envio = null;       // datos de envío validados
+  let pedido = null;      // pedido creado al primer intento de pago (se reutiliza si el pago falla)
+  let picker = null;
+  let step = 'envio';
 
   const ckErr = (id, text) => {
     const el = $(`#${id}-error`); if (el) el.textContent = text || '';
@@ -383,6 +429,16 @@ export async function initLayout() {
   };
   ['#ck-via', '#ck-num', '#ck-cruce', '#ck-placa', '#ck-comp'].forEach((s) => $(s).addEventListener('input', preview));
   form.addEventListener('input', (e) => { const f = e.target.closest('[data-field]'); if (f?.classList.contains('has-error')) ckErr(f.dataset.field, ''); });
+
+  function goStep(name) {
+    step = name;
+    $('#ck-step-envio').hidden = name !== 'envio';
+    $('#ck-step-pago').hidden = name !== 'pago';
+    $('#ck-s1').toggleAttribute('aria-current', name === 'envio'); if (name === 'envio') $('#ck-s1').setAttribute('aria-current', 'step');
+    $('#ck-s2').toggleAttribute('aria-current', name === 'pago'); if (name === 'pago') $('#ck-s2').setAttribute('aria-current', 'step');
+    $('#ck-s1').classList.toggle('done', name === 'pago');
+    dialog.scrollTop = 0;
+  }
 
   async function openCheckout() {
     if (!cart.count()) { toast('Tu carrito está vacío', 'error'); return; }
@@ -400,11 +456,16 @@ export async function initLayout() {
     form.hidden = false;
     done.hidden = true;
     form.reset();
+    pedido = null; envio = null;
     $$('[data-field]', form).forEach((f) => ckErr(f.dataset.field, ''));
     $('#ck-who').innerHTML = `<strong>${escapeHTML(m.nombre || buyer.email)}</strong>${escapeHTML(m.tipo_documento || '')} ${escapeHTML(m.documento || '')} · ${escapeHTML(buyer.email)}`;
     $('#ck-cel').value = m.celular || '';
     preview();
-    $('#checkout-total').innerHTML = `<span>Total a pagar</span><strong>${formatPrice(cart.total())}</strong>`;
+    const totalHTML = `<span>Total a pagar</span><strong>${formatPrice(cart.total())}</strong>`;
+    $('#checkout-total').innerHTML = totalHTML;
+    $('#checkout-total-2').innerHTML = totalHTML;
+    $('#ck-pay').textContent = `Pagar ${formatPrice(cart.total())}`;
+    goStep('envio');
     dialog.showModal();
   }
   $('#cart-foot').addEventListener('click', (e) => { if (e.target.closest('#checkout-open')) openCheckout(); });
@@ -414,11 +475,10 @@ export async function initLayout() {
   }
   $$('[data-modal-cancel]').forEach((b) => b.addEventListener('click', () => dialog.close()));
   dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+  $('#ck-back').addEventListener('click', () => goStep('envio'));
+  $('#ck-summary').addEventListener('click', (e) => { if (e.target.closest('[data-edit]')) goStep('envio'); });
 
-  let sending = false;
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (sending) return;
+  async function validarEnvio() {
     const a = addr();
     const v = { dep: $('#ck-dep').value, mun: $('#ck-mun').value, barrio: $('#ck-barrio').value, cel: $('#ck-cel').value, ind: $('#ck-ind').value };
     const checks = [
@@ -433,30 +493,109 @@ export async function initLayout() {
     if (checks.includes(false)) {
       form.querySelector('.has-error input, .has-error select')?.focus();
       toast('Revisa los datos de envío marcados en rojo', 'error');
-      return;
+      return false;
     }
+    const nuevo = {
+      direccion: { departamento: v.dep, municipio: CO.limpiar(v.mun), direccion: CO.formatoDireccion(a), barrio: CO.limpiar(v.barrio), indicaciones: CO.limpiar(v.ind) || null },
+      celular: CO.normalizarCelular(v.cel)
+    };
+    if (pedido && JSON.stringify(nuevo) !== JSON.stringify(envio)) pedido = null; // cambió la dirección: nuevo pedido
+    envio = nuevo;
+    $('#ck-summary').innerHTML = `<small>Enviar a</small><strong>${escapeHTML(envio.direccion.direccion)}, ${escapeHTML(envio.direccion.barrio)}</strong>
+      <span>${escapeHTML(envio.direccion.municipio)}, ${escapeHTML(envio.direccion.departamento)} · ${escapeHTML(CO.formatoCelular(envio.celular))}</span>
+      <button type="button" data-edit>Cambiar dirección</button>`;
+    pintarResumen();
+    const PU = await import('./payments-ui.js');
+    const PG = await import('./payments.js');
+    let guardados = [];
+    try { guardados = await PG.misMetodos(); } catch { /* sin métodos */ }
+    picker = PU.mountPicker($('#ck-picker'), { guardados });
+    return true;
+  }
+
+  // Resumen legal antes de pagar (Ley 1480, art. 50): productos, envío, IVA discriminado, total y entrega.
+  function pintarResumen() {
+    $('#ck-lines').innerHTML = cart.items.map((i) => `<li><span>${escapeHTML(i.nombre)}${i.variante ? ` <small>${escapeHTML(i.detalle || i.variante)}</small>` : ''}</span><small>× ${i.qty}</small><b>${formatPrice(i.precio * i.qty)}</b></li>`).join('');
+    const env = cart.shipping();
+    const { base, iva, porcentaje } = CO.desgloseIVA(cart.total(), CONFIG.ivaPorcentaje);
+    $('#ck-totals').innerHTML = `
+      <dt>Subtotal</dt><dd>${formatPrice(cart.subtotal())}</dd>
+      <dt>Envío</dt><dd>${env ? formatPrice(env) : '<span class="ck-free">Gratis</span>'}</dd>
+      <dt class="ck-sub">Base gravable</dt><dd class="ck-sub">${formatPrice(base)}</dd>
+      <dt class="ck-sub">IVA incluido (${porcentaje}%)</dt><dd class="ck-sub">${formatPrice(iva)}</dd>
+      <dt class="ck-grand">Total</dt><dd class="ck-grand">${formatPrice(cart.total())}</dd>`;
+    const E = CONFIG.entregas;
+    const principal = E.ciudadesPrincipales.some((c) => CO.limpiar(envio.direccion.municipio).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') === c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+    const [a, b] = principal ? E.diasPrincipales : E.diasResto;
+    const f = (d) => d.toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
+    $('#ck-eta').innerHTML = `${icon('truck', 16)}<span>Entrega estimada entre el <b>${f(CO.sumarDiasHabiles(new Date(), a))}</b> y el <b>${f(CO.sumarDiasHabiles(new Date(), b))}</b> (${a} a ${b} días hábiles después del pago).</span>`;
+    const m = buyer.user_metadata || {};
+    $('#ck-fact-persona').textContent = `A mi nombre (${m.tipo_documento || ''} ${m.documento || ''})`;
+  }
+  form.addEventListener('change', (e) => {
+    if (e.target.name === 'ck-fact') $('#ck-fact-empresa').hidden = e.target.value !== 'empresa';
+  });
+  function facturacion() {
+    const m = buyer.user_metadata || {};
+    const tipo = form.querySelector('input[name="ck-fact"]:checked')?.value || 'persona';
+    if (tipo === 'persona') return { tipo, nombre: m.nombre, tipo_documento: m.tipo_documento, documento: m.documento, correo: buyer.email };
+    const nit = $('#ck-nit').value; const dv = $('#ck-dv').value; const rs = $('#ck-rs').value; const mail = $('#ck-fmail').value;
+    const ok = [ckErr('ck-nit', CO.validarNIT(nit, dv)), ckErr('ck-rs', CO.validarRazonSocial(rs)),
+      ckErr('ck-fmail', /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(mail.trim()) ? '' : 'Escribe un correo válido para la factura.')];
+    if (ok.includes(false)) return null;
+    return { tipo, razon_social: CO.limpiar(rs), nit: `${CO.soloDigitos(nit)}-${dv}`, correo: mail.trim().toLowerCase() };
+  }
+
+  let sending = false;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (sending) return;
     sending = true;
-    const btn = form.querySelector('[type="submit"]'); btn.disabled = true;
+    const btn = step === 'envio' ? form.querySelector('#ck-step-envio [type="submit"]') : $('#ck-pay');
+    btn.disabled = true;
     try {
+      if (step === 'envio') { if (await validarEnvio()) goStep('pago'); return; }
+      const fact = facturacion();
+      if (!fact) { form.querySelector('.has-error input')?.focus(); toast('Revisa los datos de la factura', 'error'); return; }
+      const sel = picker?.seleccion();
+      if (!sel) { toast('Elige un método de pago', 'error'); return; }
+      if (!ckErr('ck-acepto', $('#ck-acepto').checked ? '' : 'Debes aceptar para continuar con el pago.')) { $('#ck-acepto').focus(); return; }
       const { createOrder } = await import('./auth-core.js');
-      const order = await createOrder({
-        items: cart.items.map((i) => ({ id: i.id, nombre: i.nombre, precio: i.precio, cantidad: i.qty, variante: i.variante || null })),
-        subtotal: cart.subtotal(), envio: cart.shipping(), total: cart.total(),
-        direccion: {
-          departamento: v.dep, municipio: CO.limpiar(v.mun), direccion: CO.formatoDireccion(a),
-          barrio: CO.limpiar(v.barrio), indicaciones: CO.limpiar(v.ind) || null
-        },
-        celular: CO.normalizarCelular(v.cel)
+      const PG = await import('./payments.js');
+      if (pedido && JSON.stringify(pedido.facturacion) !== JSON.stringify(fact)) pedido = null; // cambió la facturación: nuevo pedido
+      if (!pedido) {
+        pedido = await createOrder({
+          items: cart.items.map((i) => ({ id: i.id, nombre: i.nombre, precio: i.precio, cantidad: i.qty, variante: i.variante || null })),
+          subtotal: cart.subtotal(), envio: cart.shipping(), total: cart.total(), estado: 'pago_pendiente', ...envio,
+          facturacion: fact, acepta_terminos_at: new Date().toISOString()
+        });
+      }
+      const m = buyer.user_metadata || {};
+      const r = await PG.pagar({
+        pedido, metodo: sel.metodo, guardado: sel.guardado,
+        comprador: { nombre: m.nombre || '', correo: buyer.email, celular: envio.celular || m.celular, tipo_documento: m.tipo_documento, documento: m.documento }
       });
-      const code = 'VK-' + String(order?.id || Date.now()).replace(/-/g, '').slice(0, 8).toUpperCase();
-      $('#done-text').textContent = `Tu número de pedido es ${code}. Te contactaremos al ${CO.formatoCelular(CO.normalizarCelular(v.cel))} para coordinar el pago y el envío a ${CO.limpiar(v.mun)}, ${v.dep}.`;
-      cart.clear();
-      form.hidden = true;
-      done.hidden = false;
+      if (r.estado === 'cancelado') { toast('Cerraste la pasarela. Tu pedido sigue pendiente de pago.'); return; }
+      showResult(r);
     } catch (err) {
-      toast(err.message || 'No pudimos registrar el pedido. Inténtalo de nuevo.', 'error');
+      toast(err.message || 'No pudimos procesar el pago. Inténtalo de nuevo.', 'error');
     } finally { sending = false; btn.disabled = false; }
   });
+
+  async function showResult(r) {
+    const PU = await import('./payments-ui.js');
+    $('#ck-result').innerHTML = PU.resultadoHTML(r, pedido);
+    const ok = r.estado === 'aprobado' || r.estado === 'pendiente';
+    $('#ck-done-actions').innerHTML = ok
+      ? '<a class="btn btn-ghost" href="cuenta.html">Ver mis pedidos</a><button type="button" class="btn btn-primary" data-modal-cancel>Seguir comprando</button>'
+      : '<button type="button" class="btn btn-ghost" data-modal-cancel>Pagar después</button><button type="button" class="btn btn-primary" id="ck-retry">Intentar con otro método</button>';
+    if (ok) cart.clear();
+    form.hidden = true;
+    done.hidden = false;
+    dialog.scrollTop = 0;
+    $$('#ck-done-actions [data-modal-cancel]').forEach((b) => b.addEventListener('click', () => dialog.close()));
+    $('#ck-retry')?.addEventListener('click', () => { done.hidden = true; form.hidden = false; goStep('pago'); });
+  }
 
   // -- Buscador rápido --
   const overlay = $('#search');

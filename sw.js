@@ -1,5 +1,5 @@
-const CACHE = 'vokter-mobile-v4';
-const ASSETS = ['app.html', 'css/app.css', 'js/theme.js', 'js/app-auth.js', 'js/auth-ui.js', 'js/auth-core.js', 'js/config.js', 'js/colombia.js', 'js/backend-local.js', 'js/app-checkout.js', 'css/auth.css', 'js/commerce.js', 'js/app-icons.js', 'js/app-motion.js', 'js/app-modules.js', 'data/products.json', 'app.webmanifest'];
+const CACHE = 'vokter-mobile-v5';
+const ASSETS = ['app.html', 'css/app.css', 'js/theme.js', 'js/app-auth.js', 'js/auth-ui.js', 'js/auth-core.js', 'js/config.js', 'js/colombia.js', 'js/backend-local.js', 'js/app-checkout.js', 'js/payments.js', 'js/payments-ui.js', 'js/gateway-test.js', 'css/payments.css', 'css/auth.css', 'js/commerce.js', 'js/app-icons.js', 'js/app-motion.js', 'js/app-modules.js', 'data/products.json', 'app.webmanifest'];
 self.addEventListener('install', event => { self.skipWaiting(); event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS))); });
 // Borra las copias viejas para que los visitantes reciban siempre la versión nueva.
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));

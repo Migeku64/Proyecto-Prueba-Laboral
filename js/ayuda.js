@@ -4,10 +4,14 @@ import { initLayout } from './layout.js';
 import { icon } from './icons.js';
 import { FREE_SHIPPING_FROM, SHIPPING_FEE } from './cart.js';
 import { bindIndicator } from './ui.js';
+import { CONFIG } from './config.js';
+
+const E = CONFIG.empresa;
 
 await initLayout();
 
-// Textos de demostración para la propuesta; reemplazar por las políticas reales de la tienda.
+// Textos base según la Ley 1480 de 2011 (Estatuto del Consumidor) y la Ley 1581 de 2012.
+// ⚠️ Plantilla: el negocio debe revisarlos con su asesor legal y completar sus datos en js/config.js.
 const TOPICS = [
   {
     key: 'faq', label: 'Preguntas frecuentes',
@@ -32,14 +36,32 @@ const TOPICS = [
     items: [
       ['¿Cómo pido un cambio o devolución?', 'Escríbenos desde la página de contacto con tu número de pedido y cuéntanos qué pasó. Te indicamos los pasos.'],
       ['Productos con defecto', 'Si algo llega con defecto de fábrica, lo cambiamos. Nuestra promesa es calidad premium 100% garantizada.'],
-      ['Estado del producto', 'Para cambios por talla o preferencia, el producto debe estar sin uso y en su empaque original.']
+      ['Estado del producto', 'Para cambios por talla o preferencia, el producto debe estar sin uso y en su empaque original.'],
+      ['Derecho de retracto (5 días hábiles)', `Por ser una compra a distancia, puedes retractarte dentro de los 5 días hábiles siguientes a la entrega (art. 47, Ley 1480 de 2011). Escríbenos a ${E.correo} con tu número de pedido. Devuelves el producto en el mismo estado en que lo recibiste y los costos de transporte de la devolución corren por tu cuenta. Te reintegramos el dinero dentro de los 30 días calendario siguientes. No aplica a productos perecederos, de uso personal ni bienes hechos a la medida.`],
+      ['Reversión del pago', `Si pagaste con tarjeta, PSE u otro medio electrónico, puedes pedir la reversión del pago dentro de los 5 días hábiles siguientes a conocer el problema cuando: fuiste víctima de fraude, la operación no fue solicitada, el producto no se recibió o no corresponde a lo pedido o está defectuoso (art. 51, Ley 1480 de 2011 y Decreto 587 de 2016). Presenta la queja a ${E.correo} y al emisor del medio de pago, y devuelve el producto si lo recibiste.`],
+      ['Garantía legal', 'Todos los productos tienen la garantía legal que exige la ley colombiana: calidad, idoneidad y seguridad. Si un producto falla, lo reparamos, cambiamos o te devolvemos el dinero según el caso.']
+    ]
+  },
+  {
+    key: 'pagos', label: 'Medios de pago',
+    items: [
+      ['¿Cómo puedo pagar?', 'Con tarjeta de crédito o débito (Visa, Mastercard, American Express y Diners), PSE desde cualquier banco, Nequi, Botón Bancolombia o en efectivo en Efecty y corresponsales bancarios con un código de pago.'],
+      ['¿Puedo pagar a cuotas?', 'Sí. Con tarjeta de crédito eliges de 1 a 36 cuotas al pagar. Los intereses dependen de tu banco.'],
+      ['¿Es seguro pagar aquí?', `Sí. El pago lo procesa una pasarela certificada PCI DSS. ${E.nombreComercial} nunca ve ni guarda el número completo de tu tarjeta ni su código de seguridad: solo recibimos la confirmación del pago y los últimos 4 dígitos.`],
+      ['¿Qué pasa si pago en efectivo?', 'Recibes un código de pago con fecha límite. Tu pedido se confirma y se despacha cuando el pago llega, normalmente el mismo día hábil.'],
+      ['Mi pago fue rechazado', 'Puedes intentarlo con otro medio de pago desde el mismo pedido, o más tarde desde "Mi cuenta" con el botón "Pagar ahora". No se hace ningún cobro por un pago rechazado.'],
+      ['Factura electrónica', 'Emitimos factura electrónica según la DIAN. Al pagar eliges si va a tu nombre o al de una empresa (NIT). Llega al correo después de confirmar el pago.'],
+      ['Precios e IVA', `Todos los precios están en pesos colombianos (COP) e incluyen IVA (${CONFIG.ivaPorcentaje}%). Antes de pagar ves el valor del envío y el total.`]
     ]
   },
   {
     key: 'terminos', label: 'Privacidad y términos',
     items: [
       ['Privacidad', 'Usamos tus datos únicamente para gestionar pedidos y, si te suscribes, enviarte novedades. No los compartimos con terceros ajenos al envío.'],
-      ['Términos de uso', 'Al comprar en VOKTER aceptas las condiciones de venta, envío y garantía descritas en este centro de ayuda.']
+      ['Términos de uso', `Al comprar en ${E.nombreComercial} aceptas las condiciones de venta, envío y garantía descritas en este centro de ayuda.`],
+      ['Tratamiento de datos personales', `Tratamos tus datos según la Ley 1581 de 2012 para gestionar tu cuenta, pedidos, pagos y facturación. Puedes conocer, actualizar, rectificar o pedir la supresión de tus datos escribiendo a ${E.correo}.`],
+      ['Información del vendedor', `${E.razonSocial} · NIT ${E.nit} · ${E.direccion}, ${E.ciudad} · Teléfono ${E.telefono} · ${E.correo} · ${E.horario}.`],
+      ['Protección al consumidor', 'Si tienes una queja que no hayamos resuelto, puedes acudir a la Superintendencia de Industria y Comercio (www.sic.gov.co).']
     ]
   }
 ];

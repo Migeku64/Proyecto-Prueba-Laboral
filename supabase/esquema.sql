@@ -73,17 +73,22 @@ create table if not exists public.pedidos (
   estado      text not null default 'recibido' check (estado in ('recibido', 'pago_pendiente', 'pagado', 'enviado', 'entregado', 'cancelado')),
   creado_at   timestamptz not null default now()
 );
+-- Facturación electrónica y aceptación de términos (Ley 1480, art. 50).
+alter table public.pedidos add column if not exists facturacion jsonb
+  check (facturacion is null or (facturacion ->> 'tipo' in ('persona', 'empresa') and facturacion ? 'correo'));
+alter table public.pedidos add column if not exists acepta_terminos_at timestamptz;
 create index if not exists pedidos_usuario_idx on public.pedidos (usuario_id, creado_at desc);
 
 alter table public.pedidos enable row level security;
 drop policy if exists "ver mis pedidos" on public.pedidos;
 create policy "ver mis pedidos" on public.pedidos for select to authenticated using ((select auth.uid()) = usuario_id);
--- Cada cliente crea pedidos solo a su nombre y en estado 'recibido'.
+-- Cada cliente crea pedidos solo a su nombre y sin pagar ('recibido' o 'pago_pendiente').
+-- Solo el servidor los pasa a 'pagado' cuando la pasarela confirma el pago.
 -- (Con "Confirm email" activo, nadie obtiene sesión sin verificar su correo.)
 -- IMPORTANTE al agregar pagos: recalcular precios y total en el servidor, no confiar en los del navegador.
 drop policy if exists "crear mis pedidos" on public.pedidos;
 create policy "crear mis pedidos" on public.pedidos for insert to authenticated
-  with check ((select auth.uid()) = usuario_id and estado = 'recibido');
+  with check ((select auth.uid()) = usuario_id and estado in ('recibido', 'pago_pendiente'));
 -- Nadie modifica ni borra pedidos desde la web: eso lo hace la tienda desde el panel.
 
 -- Mantiene actualizado_at al día en perfiles.
@@ -92,3 +97,69 @@ returns trigger language plpgsql set search_path = '' as $$ begin new.actualizad
 drop trigger if exists perfiles_actualizado on public.perfiles;
 create trigger perfiles_actualizado before update on public.perfiles
   for each row execute function public.tocar_actualizado();
+
+-- ===================== PAGOS =====================
+-- Seguridad PCI DSS: aquí NUNCA se guarda el número completo de la tarjeta ni el CVV.
+-- Solo la referencia de la pasarela (token), la marca y los últimos 4 dígitos.
+
+create table if not exists public.metodos_pago (
+  id             uuid primary key default gen_random_uuid(),
+  usuario_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  tipo           text not null check (tipo in ('tarjeta', 'nequi')),
+  marca          text check (marca in ('Visa', 'Mastercard', 'American Express', 'Diners Club')),
+  ultimos4       text check (ultimos4 ~ '^[0-9]{4}$'),
+  vence          text check (vence ~ '^(0[1-9]|1[0-2])/[0-9]{2}$'),
+  titular        text check (char_length(titular) <= 40),
+  celular        text check (celular ~ '^3(0|1|2|3|5)[0-9]{8}$'),
+  token          text,                 -- referencia de la pasarela (payment source / token)
+  huella         text not null,        -- evita guardar dos veces el mismo método
+  predeterminado boolean not null default false,
+  creado_at      timestamptz not null default now(),
+  unique (usuario_id, huella),
+  check ((tipo = 'tarjeta' and marca is not null and ultimos4 is not null and vence is not null and token is not null)
+      or (tipo = 'nequi' and celular is not null))
+);
+alter table public.metodos_pago enable row level security;
+drop policy if exists "mis metodos" on public.metodos_pago;
+create policy "mis metodos" on public.metodos_pago for all to authenticated
+  using ((select auth.uid()) = usuario_id) with check ((select auth.uid()) = usuario_id);
+
+-- Máximo 5 métodos por cliente.
+create or replace function public.limite_metodos() returns trigger language plpgsql set search_path = '' as $$
+begin
+  if (select count(*) from public.metodos_pago where usuario_id = new.usuario_id) >= 5 then
+    raise exception 'too_many_methods';
+  end if;
+  if not exists (select 1 from public.metodos_pago where usuario_id = new.usuario_id) then new.predeterminado := true; end if;
+  return new;
+end; $$;
+drop trigger if exists metodos_limite on public.metodos_pago;
+create trigger metodos_limite before insert on public.metodos_pago for each row execute function public.limite_metodos();
+
+-- Cambia el método predeterminado del cliente.
+create or replace function public.metodo_predeterminado(metodo uuid) returns void language sql security invoker set search_path = '' as $$
+  update public.metodos_pago set predeterminado = (id = metodo) where usuario_id = auth.uid();
+$$;
+
+create table if not exists public.pagos (
+  id          uuid primary key default gen_random_uuid(),
+  pedido_id   uuid not null references public.pedidos (id) on delete restrict,
+  usuario_id  uuid not null references auth.users (id) on delete restrict,
+  pasarela    text not null,
+  referencia  text not null unique,
+  transaccion text unique,            -- id de la transacción en la pasarela
+  metodo      text not null,
+  monto       integer not null check (monto > 0),
+  moneda      text not null default 'COP' check (moneda = 'COP'),
+  estado      text not null check (estado in ('aprobado', 'rechazado', 'pendiente', 'error')),
+  detalle     jsonb not null default '{}'::jsonb,   -- marca, últimos 4, banco, cuotas… (nunca datos completos)
+  mensaje     text,
+  creado_at   timestamptz not null default now(),
+  actualizado_at timestamptz not null default now()
+);
+create index if not exists pagos_usuario_idx on public.pagos (usuario_id, creado_at desc);
+alter table public.pagos enable row level security;
+drop policy if exists "ver mis pagos" on public.pagos;
+create policy "ver mis pagos" on public.pagos for select to authenticated using ((select auth.uid()) = usuario_id);
+-- Sin políticas de insert/update: SOLO el servidor (Edge Functions con service_role) registra y cambia pagos,
+-- después de confirmar el estado directamente con la pasarela.

@@ -146,3 +146,43 @@ export function filtrarEntrada(input, tipo) {
     if (antes !== despues) { input.value = despues; try { input.setSelectionRange(pos - (antes.length - despues.length), pos - (antes.length - despues.length)); } catch { /* email/date */ } }
   });
 }
+
+
+// ---------- NIT (DIAN) ----------
+// Dígito de verificación del NIT según el algoritmo de la DIAN (módulo 11).
+export function digitoVerificacion(nit) {
+  const pesos = [3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71];
+  const d = soloDigitos(nit).split('').reverse();
+  const suma = d.reduce((s, n, i) => s + Number(n) * pesos[i], 0);
+  const r = suma % 11;
+  return r > 1 ? 11 - r : r;
+}
+export function validarNIT(nit, dv) {
+  const n = soloDigitos(nit);
+  if (!/^[1-9]\d{8,9}$/.test(n)) return 'El NIT tiene 9 o 10 dígitos, sin el dígito de verificación.';
+  if (!/^\d$/.test(String(dv ?? '').trim())) return 'Escribe el dígito de verificación (DV).';
+  if (digitoVerificacion(n) !== Number(dv)) return 'El dígito de verificación no corresponde a ese NIT.';
+  return '';
+}
+export function validarRazonSocial(v) {
+  const s = limpiar(v);
+  if (s.length < 3) return 'Escribe la razón social como aparece en el RUT.';
+  if (s.length > 120) return 'Máximo 120 caracteres.';
+  if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 .,&'-]+$/.test(s)) return 'La razón social tiene caracteres no permitidos.';
+  return '';
+}
+
+// ---------- IVA y entregas ----------
+// Los precios incluyen IVA: se discrimina la base y el impuesto.
+export function desgloseIVA(total, porcentaje = 19) {
+  const base = Math.round(total / (1 + porcentaje / 100));
+  return { base, iva: total - base, porcentaje };
+}
+
+// Suma días hábiles (lunes a viernes; no descuenta festivos).
+export function sumarDiasHabiles(desde, dias) {
+  const d = new Date(desde);
+  let n = 0;
+  while (n < dias) { d.setDate(d.getDate() + 1); const w = d.getDay(); if (w !== 0 && w !== 6) n++; }
+  return d;
+}

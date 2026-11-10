@@ -38,6 +38,17 @@ export function getClient() {
           create: (o) => c.from('pedidos').insert(o).select().single(),
           mine: () => c.from('pedidos').select('*').order('creado_at', { ascending: false })
         };
+        // El estado del pago lo confirma el servidor con la pasarela (Edge Function "registrar-pago").
+        c.payments = {
+          record: (p) => c.functions.invoke('registrar-pago', { body: p }),
+          mine: () => c.from('pagos').select('*').order('creado_at', { ascending: false })
+        };
+        c.methods = {
+          list: () => c.from('metodos_pago').select('*').order('predeterminado', { ascending: false }),
+          add: (m) => c.from('metodos_pago').insert(m).select().single(),
+          remove: (id) => c.from('metodos_pago').delete().eq('id', id),
+          setDefault: (id) => c.rpc('metodo_predeterminado', { metodo: id })
+        };
         return c;
       });
     } else {
@@ -72,6 +83,8 @@ const MESSAGES = {
   network: 'No hay conexión con el servidor. Revisa tu internet e inténtalo de nuevo.',
   bot: 'No pudimos procesar el formulario. Recarga la página e inténtalo de nuevo.',
   too_fast: 'Fuiste muy rápido. Revisa tus datos y vuelve a enviar.',
+  too_many_methods: 'Puedes guardar máximo 5 métodos de pago. Elimina uno para agregar otro.',
+  method_exists: 'Ese método de pago ya está guardado.',
   unknown: 'Algo salió mal. Inténtalo de nuevo en unos minutos.'
 };
 
@@ -92,7 +105,7 @@ function translate(error) {
   if (msg.includes('fetch') || msg.includes('network')) return new AuthError('network');
   return new AuthError('unknown');
 }
-async function run(fn) {
+export async function run(fn) {
   const client = await getClient();
   let result;
   try { result = await fn(client); } catch (e) { throw translate(e); }

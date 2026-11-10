@@ -9,7 +9,7 @@
 //  - Correo (incluidas variantes de Gmail con puntos o +etiqueta), documento y celular únicos.
 // Limitación: los datos viven solo en este navegador, y el "correo" con el código se muestra en pantalla.
 
-const K = { users: 'vokter-db-usuarios', codes: 'vokter-db-codigos', session: 'vokter-db-sesion', tries: 'vokter-db-intentos', orders: 'vokter-db-pedidos' };
+const K = { users: 'vokter-db-usuarios', codes: 'vokter-db-codigos', session: 'vokter-db-sesion', tries: 'vokter-db-intentos', orders: 'vokter-db-pedidos', payments: 'vokter-db-pagos', methods: 'vokter-db-metodos' };
 const CODE_TTL = 10 * 60 * 1000;
 const SESSION_TTL = 8 * 60 * 60 * 1000;
 const MAX_TRIES = 5;
@@ -149,13 +149,64 @@ export const localClient = {
     async create(order) {
       const u = sessionUser(); if (!u) return fail('session_missing');
       const all = read(K.orders, []);
-      const row = { ...order, id: uuid(), usuario_id: u.id, creado_at: new Date().toISOString(), estado: 'recibido' };
+      const row = { ...order, id: uuid(), usuario_id: u.id, creado_at: new Date().toISOString(), estado: order.estado === 'pago_pendiente' ? 'pago_pendiente' : 'recibido' };
       all.push(row); write(K.orders, all);
       return ok(row);
     },
     async mine() {
       const u = sessionUser(); if (!u) return ok([]);
       return ok(read(K.orders, []).filter((o) => o.usuario_id === u.id).sort((a, b) => b.creado_at.localeCompare(a.creado_at)));
+    }
+  },
+
+  // Pagos: en producción los registra el servidor al recibir la confirmación (webhook) de la pasarela.
+  // Aquí solo se guardan datos no sensibles: nunca el número completo de la tarjeta ni el CVV.
+  payments: {
+    async record(pago) {
+      const u = sessionUser(); if (!u) return fail('session_missing');
+      const all = read(K.payments, []);
+      const row = { ...pago, id: uuid(), usuario_id: u.id, creado_at: new Date().toISOString() };
+      all.push(row); write(K.payments, all);
+      const orders = read(K.orders, []);
+      const o = orders.find((x) => x.id === pago.pedido_id && x.usuario_id === u.id);
+      if (o) { o.estado = pago.estado === 'aprobado' ? 'pagado' : 'pago_pendiente'; o.pago_id = row.id; write(K.orders, orders); }
+      return ok(row);
+    },
+    async mine() {
+      const u = sessionUser(); if (!u) return ok([]);
+      return ok(read(K.payments, []).filter((p) => p.usuario_id === u.id).sort((a, b) => b.creado_at.localeCompare(a.creado_at)));
+    }
+  },
+
+  // Métodos guardados: solo la referencia (token) de la pasarela y datos para mostrar.
+  methods: {
+    async list() {
+      const u = sessionUser(); if (!u) return ok([]);
+      return ok(read(K.methods, []).filter((m) => m.usuario_id === u.id).sort((a, b) => (b.predeterminado - a.predeterminado) || b.creado_at.localeCompare(a.creado_at)));
+    },
+    async add(m) {
+      const u = sessionUser(); if (!u) return fail('session_missing');
+      const all = read(K.methods, []);
+      const mine = all.filter((x) => x.usuario_id === u.id);
+      if (mine.length >= 5) return fail('too_many_methods');
+      if (mine.some((x) => x.huella && x.huella === m.huella)) return fail('method_exists');
+      const row = { ...m, id: uuid(), usuario_id: u.id, creado_at: new Date().toISOString(), predeterminado: mine.length === 0 };
+      all.push(row); write(K.methods, all);
+      return ok(row);
+    },
+    async remove(id) {
+      const u = sessionUser(); if (!u) return fail('session_missing');
+      let all = read(K.methods, []);
+      const was = all.find((x) => x.id === id && x.usuario_id === u.id);
+      all = all.filter((x) => !(x.id === id && x.usuario_id === u.id));
+      if (was?.predeterminado) { const next = all.find((x) => x.usuario_id === u.id); if (next) next.predeterminado = true; }
+      write(K.methods, all); return ok();
+    },
+    async setDefault(id) {
+      const u = sessionUser(); if (!u) return fail('session_missing');
+      const all = read(K.methods, []);
+      all.forEach((x) => { if (x.usuario_id === u.id) x.predeterminado = x.id === id; });
+      write(K.methods, all); return ok();
     }
   }
 };
