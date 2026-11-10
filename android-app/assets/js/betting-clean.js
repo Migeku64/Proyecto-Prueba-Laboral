@@ -19,7 +19,7 @@
   };
 
   const keys = { theme: 'fanaticos-theme', balance: 'fanaticos-balance', bets: 'fanaticos-bets', profile: 'fanaticos-profile', session: 'fanaticos-auth-session' };
-  const state = { sport: 'all', league: 'all', market: 'principales', picks: [], balance: Number(localStorage.getItem(keys.balance) || 250000), authenticated: sessionStorage.getItem('fanaticos-auth-session') === 'true', source: 'local' };
+  const state = { sport: 'all', league: 'all', market: 'principales', picks: [], balance: Number(localStorage.getItem(keys.balance) || 250000), authenticated: sessionStorage.getItem('fanaticos-auth-session') === 'true', source: 'local', detailId: null, lastUpdate: 0, hasLoadedReal: false };
   const marketLabels = { principales: 'Principales', goles: 'Goles', corners: 'Corners', mitad: 'Mitad' };
 
   let matches = [
@@ -46,8 +46,9 @@
     const values = details.match(/\d+(?:\.\d+)?/g)?.slice(0, 3);
     return values?.length === 3 ? values : fallback;
   };
-  async function loadRealMatches() {
-    const requests = ESPN_LEAGUES.flatMap(league => dateList().map(async date => {
+  async function loadRealMatches(options = {}) {
+    const dates = options.liveOnly ? [isoDate(new Date())] : dateList();
+    const requests = ESPN_LEAGUES.flatMap(league => dates.map(async date => {
       const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${league.slug}/scoreboard?dates=${date}`;
       const response = await fetch(url, { headers: { Accept: 'application/json' } });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -65,11 +66,26 @@
     const groups = await Promise.allSettled(requests);
     const fresh = groups.flatMap(result => result.status === 'fulfilled' ? result.value : []);
     if (!fresh.length) throw new Error('No hay partidos disponibles');
-    matches = fresh;
+    if (options.liveOnly && state.hasLoadedReal) {
+      const freshById = new Map(fresh.map(match => [match.id, match]));
+      matches = matches.map(match => freshById.get(match.id) || match);
+      fresh.forEach(match => { if (!matches.some(current => current.id === match.id)) matches.push(match); });
+    } else matches = fresh;
     state.source = 'ESPN';
+    state.lastUpdate = Date.now();
     catalog.render();
     renderPopular();
-    toast(`Partidos reales actualizados · ${matches.length} encuentros`);
+    updateLiveTicker();
+    if (state.detailId && $('#match-detail')?.classList.contains('open')) catalog.detail(state.detailId);
+    if (!state.hasLoadedReal) toast(`Partidos reales actualizados · ${matches.length} encuentros`);
+    state.hasLoadedReal = true;
+  }
+
+  function updateLiveTicker() {
+    const ticker = $('#ticker-copy');
+    if (!ticker) return;
+    const when = state.lastUpdate ? new Date(state.lastUpdate).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+    ticker.textContent = `Última actualización ${when} · ${matches.length} partidos`;
   }
   const toast = message => {
     const node = $('#toast'); if (!node) return;
@@ -149,6 +165,7 @@
     },
     detail(id) {
       const match = getMatch(id) || (id === 'featured-1' ? matches.find(item => item.sport === 'colombia') : matches.find(item => item.sport === 'international')); const panel = $('#match-detail'); if (!match || !panel) return toast('Todavía no hay un partido disponible en esta liga.');
+      state.detailId = match.id;
       let title = $('#detail-title') || $('.match-topbar > div strong', panel);
       if (!title) { title = document.createElement('strong'); $('.match-topbar > div', panel)?.appendChild(title); }
       title.id = 'detail-title';
@@ -328,7 +345,8 @@
     setupProfileIcons();
     setupSocialButtons();
     catalog.render(); slip.render(); renderHistory(); setupNavigation(); setupEvents(); setupAccount(); setupAuthAndTheme();
-    loadRealMatches().catch(() => toast('No se pudo actualizar el calendario; mostrando partidos de respaldo.'));
+    loadRealMatches().catch(() => { updateLiveTicker(); toast('No se pudo actualizar el calendario; mostrando partidos de respaldo.'); });
+    setInterval(() => loadRealMatches({ liveOnly: true }).catch(() => updateLiveTicker()), 30000);
     $$('.reveal').forEach(item => item.classList.add('visible'));
     on('#close-slip', 'click', closePanels); on('#scrim', 'click', closePanels); $$('[data-close-panel]').forEach(button => on(button, 'click', closePanels)); on('#place-bet', 'click', () => slip.confirm()); on('#stake', 'input', () => slip.render());
     const profile = read(keys.profile, null); if (profile) { $('#profile-title').textContent = profile.name; $('#profile-name').value = profile.name; $('#profile-email').value = profile.email; }
