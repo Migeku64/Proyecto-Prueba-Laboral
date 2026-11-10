@@ -707,3 +707,13 @@ a.info-item:hover { transform: translateX(6px); }
 @media (max-width: 640px) { .icon-btn.account-btn { display: none; } }
 .modal-wide { width: min(640px, calc(100% - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
 @media (max-width: 560px) { .modal-wide { padding: 24px 18px; border-radius: 24px; } }
+
+/* Aviso de correo inválido (contacto y suscripción) */
+.email-error { display: block; margin-top: 6px; color: #E5484D; font-size: 13px; font-weight: 700; }
+.email-error:empty { display: none; }
+.site-footer .email-error { color: #FFB4B6; }
+.inline-form { flex-wrap: wrap; }
+.inline-form .email-error { flex-basis: 100%; order: 3; margin: 2px 0 0 20px; }
+label > .email-error { margin-top: 2px; }
+input.is-invalid { border-color: #E5484D !important; box-shadow: 0 0 0 3px rgba(229, 72, 77, .18); }
+.form-two { align-items: start; }

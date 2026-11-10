@@ -7,6 +7,7 @@ import { cart, FREE_SHIPPING_FROM } from './cart.js';
 import { bindIndicator, toast, bumpCart } from './ui.js';
 import * as CO from './colombia.js';
 import { CONFIG } from './config.js';
+import { validarCorreo, enlazarCorreo, mensajeBajo } from './email.js';
 
 const NAV = [
   { href: 'index.html', label: 'Inicio', page: 'index.html' },
@@ -411,6 +412,7 @@ export async function initLayout() {
   const form = $('#checkout-form');
   const done = $('#checkout-done');
   $$('[data-filter]', form).forEach((el) => CO.filtrarEntrada(el, el.dataset.filter));
+  enlazarCorreo($('#ck-fmail'), (m) => ckErr('ck-fmail', m));
   let buyer = null;
   let envio = null;       // datos de envío validados
   let pedido = null;      // pedido creado al primer intento de pago (se reutiliza si el pago falla)
@@ -541,7 +543,7 @@ export async function initLayout() {
     if (tipo === 'persona') return { tipo, nombre: m.nombre, tipo_documento: m.tipo_documento, documento: m.documento, correo: buyer.email };
     const nit = $('#ck-nit').value; const dv = $('#ck-dv').value; const rs = $('#ck-rs').value; const mail = $('#ck-fmail').value;
     const ok = [ckErr('ck-nit', CO.validarNIT(nit, dv)), ckErr('ck-rs', CO.validarRazonSocial(rs)),
-      ckErr('ck-fmail', /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(mail.trim()) ? '' : 'Escribe un correo válido para la factura.')];
+      ckErr('ck-fmail', validarCorreo(mail))];
     if (ok.includes(false)) return null;
     return { tipo, razon_social: CO.limpiar(rs), nit: `${CO.soloDigitos(nit)}-${dv}`, correo: mail.trim().toLowerCase() };
   }
@@ -691,14 +693,13 @@ export async function initLayout() {
     if (!f) return;
     e.preventDefault();
     const email = f.querySelector('input[type="email"]');
-    if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) {
-      email.focus();
-      toast('Escribe un correo válido para suscribirte', 'error');
-      return;
-    }
+    const m = validarCorreo(email.value);
+    mensajeBajo(email)(m);
+    if (m) { email.focus(); return; }
     toast('Listo, te avisaremos de los próximos drops');
     f.reset();
   });
+  $$('[data-newsletter] input[type="email"]').forEach((el) => enlazarCorreo(el, mensajeBajo(el)));
 
   // -- Datos: rellena mega menú, menú móvil y buscador --
   const data = await loadData();

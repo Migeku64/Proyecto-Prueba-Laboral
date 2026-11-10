@@ -1,6 +1,7 @@
 // contacto.js — formulario de contacto (demostración: no envía datos a ningún servidor)
 import { $, $$ } from './utils.js';
 import { initLayout } from './layout.js';
+import { enlazarCorreo, mensajeBajo } from './email.js';
 import { icon } from './icons.js';
 import { toast } from './ui.js';
 
@@ -21,6 +22,7 @@ $('#info-list').innerHTML = `
   </a>`;
 
 const form = $('#contact-form');
+const revisarCorreo = enlazarCorreo(form.email, mensajeBajo(form.email));
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const email = form.email;
@@ -30,11 +32,7 @@ form.addEventListener('submit', (e) => {
     toast('Completa tu nombre, correo y mensaje', 'error');
     return;
   }
-  if (!/^\S+@\S+\.\S+$/.test(email.value.trim())) {
-    email.focus();
-    toast('Escribe un correo válido', 'error');
-    return;
-  }
+  if (!revisarCorreo()) { email.focus(); return; }
   toast('Mensaje enviado. Te responderemos pronto');
   form.reset();
 });

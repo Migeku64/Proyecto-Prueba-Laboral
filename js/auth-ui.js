@@ -2,6 +2,7 @@
 // Se monta igual en la web (cuenta.html) y en la app (app.html).
 import * as A from './auth-core.js';
 import * as CO from './colombia.js';
+import { enlazarCorreo } from './email.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const RESEND_SECONDS = 60;
@@ -125,6 +126,8 @@ export function mountAuth(root, opts = {}) {
   const state = { view: '', email: '', codeTries: 0, captchas: {}, cooldown: 0, timer: null };
 
   root.querySelectorAll('[data-filter]').forEach((el) => CO.filtrarEntrada(el, el.dataset.filter));
+  // Correos: el aviso aparece al salir del campo, sin esperar a enviar el formulario.
+  root.querySelectorAll('input[type="email"]').forEach((el) => enlazarCorreo(el, (m) => fieldError(el.id, m), A.validateEmail));
 
   // ----- mensajes -----
   const msg = $('#au-msg');

@@ -13,6 +13,7 @@
 
 import { CONFIG } from './config.js';
 import * as CO from './colombia.js';
+import { validarCorreo, MENSAJE_CORREO } from './email.js';
 
 const SUPABASE_LIB = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
 const TURNSTILE_LIB = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
@@ -135,10 +136,9 @@ export function canonicalEmail(v) {
 
 export function validateEmail(v) {
   const email = normalizeEmail(v);
-  if (!email) return 'Escribe tu correo.';
-  if (email.length > CO.LIMITES.correo) return `Máximo ${CO.LIMITES.correo} caracteres.`;
-  if (!/^[a-z0-9](?:[a-z0-9._%+-]{0,62}[a-z0-9])?@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/.test(email) || email.includes('..'))
-    return 'Escribe un correo válido (ej. nombre@gmail.com).';
+  if (email.length > CO.LIMITES.correo) return MENSAJE_CORREO;
+  const formato = validarCorreo(email);
+  if (formato) return formato;
   const domain = email.split('@')[1];
   if (DISPOSABLE.some((d) => domain === d || domain.endsWith('.' + d))) return 'No aceptamos correos temporales. Usa tu correo personal.';
   return '';
