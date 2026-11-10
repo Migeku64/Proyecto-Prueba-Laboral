@@ -8,18 +8,13 @@
   <link rel="manifest" href="app.webmanifest">
   <link rel="icon" type="image/svg+xml" href="assets/vokter-mark.svg">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/auth.css">
   <title>VOKTER | Tienda movil</title>
 </head>
 <body>
   <section class="auth-screen" id="auth-screen">
     <div class="auth-brand"><span class="vokter-mark"><i></i></span><strong>VOKTER</strong></div>
-    <div class="auth-card">
-      <div class="auth-heading"><p class="eyebrow">Tu seleccion urbana</p><h1 id="auth-title">Bienvenido a VOKTER</h1><p id="auth-subtitle">Inicia sesion para guardar favoritos y continuar comprando.</p></div>
-      <div class="auth-tabs"><button class="auth-tab active" data-auth-mode="login">Iniciar sesion</button><button class="auth-tab" data-auth-mode="register">Crear cuenta</button></div>
-      <form id="login-form" class="auth-form"><label>Correo electronico<input type="email" id="login-email" autocomplete="email" required placeholder="tu@correo.com"></label><label>Contrasena<input type="password" id="login-password" autocomplete="current-password" required placeholder="Minimo 6 caracteres"></label><button class="auth-submit" type="submit">Entrar a VOKTER <span>&rarr;</span></button><p class="auth-message" id="login-message" role="alert"></p></form>
-      <form id="register-form" class="auth-form is-hidden"><label>Nombre<input type="text" id="register-name" autocomplete="name" required placeholder="Tu nombre"></label><label>Correo electronico<input type="email" id="register-email" autocomplete="email" required placeholder="tu@correo.com"></label><label>Contrasena<input type="password" id="register-password" autocomplete="new-password" minlength="6" required placeholder="Minimo 6 caracteres"></label><button class="auth-submit" type="submit">Crear mi cuenta <span>&rarr;</span></button><p class="auth-message" id="register-message" role="alert"></p></form>
-      <p class="auth-note">Cuenta local de demostracion para esta propuesta.</p>
-    </div>
+    <div class="auth-card" id="auth-mount"><p class="auth-note">Cargando…</p></div>
   </section>
 
   <div class="store-app is-hidden" id="store-app">
@@ -46,6 +41,6 @@
   <dialog id="product-dialog"><div class="product-dialog-inner"><button class="dialog-close" aria-label="Cerrar">&times;</button><div id="dialog-content"></div></div></dialog>
   <dialog id="cart-dialog"><div class="cart-dialog-inner"><button class="dialog-close cart-close" aria-label="Cerrar">&times;</button><p class="eyebrow">Tu seleccion</p><h2>Tu carrito</h2><div class="cart-shipping"><strong>¡Tu pedido tiene envío gratis!</strong><span><i id="cart-shipping-progress"></i></span></div><div id="cart-list" class="cart-list"></div><div class="cart-summary"><span>Total</span><strong id="cart-total">$ 0</strong></div><button class="dialog-add" id="checkout-button">Continuar al pago</button></div></dialog>
   <dialog id="checkout-dialog"><div class="checkout-inner"><button class="dialog-close checkout-close" aria-label="Cerrar">&times;</button><p class="eyebrow">Compra segura</p><h2>Finalizar compra</h2><p class="checkout-note">Esta es una simulacion. No se realizara ningun cobro.</p><form id="checkout-form"><label>Nombre completo<input required id="checkout-name" placeholder="Tu nombre"></label><label>Direccion de entrega<input required id="checkout-address" placeholder="Calle 00 # 00-00"></label><div class="checkout-row"><label>Ciudad<input required id="checkout-city" value="Bogota"></label><label>Tarjeta<input required id="checkout-card" inputmode="numeric" maxlength="4" placeholder="Ultimos 4 digitos"></label></div><button class="dialog-add" type="submit">Confirmar compra</button><p class="checkout-message" id="checkout-message" role="status"></p></form></div></dialog>
-  <script src="js/app-icons.js"></script><script type="module" src="js/theme.js"></script><script src="js/auth.js"></script><script src="js/commerce.js"></script><script src="js/app-motion.js"></script><script src="js/app-modules.js"></script>
+  <script src="js/app-icons.js"></script><script type="module" src="js/theme.js"></script><script type="module" src="js/app-auth.js"></script><script type="module" src="js/app-checkout.js"></script><script src="js/commerce.js"></script><script src="js/app-motion.js"></script><script src="js/app-modules.js"></script>
 </body>
 </html>

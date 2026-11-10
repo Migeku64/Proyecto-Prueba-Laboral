@@ -5,6 +5,7 @@ import { art, productArt, icon } from './icons.js';
 import { initTheme } from './theme.js';
 import { cart, FREE_SHIPPING_FROM } from './cart.js';
 import { bindIndicator, toast, bumpCart } from './ui.js';
+import * as CO from './colombia.js';
 
 const NAV = [
   { href: 'index.html', label: 'Inicio', page: 'index.html' },
@@ -47,6 +48,7 @@ function headerHTML() {
         </button>
         <button type="button" class="icon-btn search-icon" id="search-open-mobile" aria-label="Buscar productos">${icon('search')}</button>
         <button type="button" class="icon-btn" id="theme-btn"></button>
+        <a class="icon-btn account-btn" id="account-btn" href="cuenta.html" aria-label="Ingresar o crear cuenta">${icon('user')}<span id="account-name">Ingresar</span></a>
         <button type="button" class="icon-btn cart-btn" id="cart-btn" aria-label="Abrir carrito">
           ${icon('cart')}<span class="cart-count" id="cart-count" hidden>0</span>
         </button>
@@ -145,13 +147,42 @@ function overlaysHTML() {
     </div>
   </div>
 
-  <dialog class="modal" id="checkout">
-    <form method="dialog" id="checkout-form" novalidate>
-      <h2>Finalizar compra</h2>
-      <p class="modal-sub">Este es un checkout de demostración: no se realiza ningún cobro.</p>
-      <label>Nombre completo<input name="nombre" type="text" autocomplete="name" required></label>
-      <label>Ciudad<input name="ciudad" type="text" autocomplete="address-level2" required></label>
-      <label>Celular<input name="celular" type="tel" autocomplete="tel" required></label>
+  <dialog class="modal modal-wide" id="checkout" aria-labelledby="checkout-title">
+    <form method="dialog" id="checkout-form" class="au" novalidate>
+      <h2 id="checkout-title">Finalizar compra</h2>
+      <p class="modal-sub">Envíos solo dentro de Colombia. Los métodos de pago se habilitarán pronto; por ahora coordinamos el pago al confirmar tu pedido.</p>
+      <div class="ck-who" id="ck-who"></div>
+      <fieldset class="ck-section"><legend>Dirección de envío</legend>
+        <div class="au-two">
+          <div class="au-field" data-field="ck-dep"><label for="ck-dep">Departamento</label>
+            <select id="ck-dep" autocomplete="address-level1" required><option value="">Elige…</option>${CO.DEPARTAMENTOS.map((d) => `<option>${d}</option>`).join('')}</select>
+            <small class="au-error" id="ck-dep-error"></small></div>
+          <div class="au-field" data-field="ck-mun"><label for="ck-mun">Municipio o ciudad</label>
+            <input type="text" id="ck-mun" autocomplete="address-level2" required maxlength="${CO.LIMITES.municipio}" data-filter="letras">
+            <small class="au-error" id="ck-mun-error"></small></div>
+        </div>
+        <div class="ck-addr" data-field="ck-dir">
+          <div class="au-field"><label for="ck-via">Vía</label><select id="ck-via" required><option value="">Elige…</option>${CO.TIPOS_VIA.map((v) => `<option>${v}</option>`).join('')}</select></div>
+          <div class="au-field"><label for="ck-num">Número</label><input type="text" id="ck-num" required maxlength="${CO.LIMITES.numeroVia}" placeholder="12B" data-filter="via"></div>
+          <span class="ck-sep" aria-hidden="true">#</span>
+          <div class="au-field"><label for="ck-cruce">Cruce</label><input type="text" id="ck-cruce" required maxlength="${CO.LIMITES.numeroVia}" placeholder="34A" data-filter="via"></div>
+          <span class="ck-sep" aria-hidden="true">-</span>
+          <div class="au-field"><label for="ck-placa">Placa</label><input type="text" id="ck-placa" inputmode="numeric" required maxlength="3" placeholder="56" data-filter="digitos"></div>
+        </div>
+        <small class="au-error" id="ck-dir-error"></small>
+        <p class="ck-preview" id="ck-preview"></p>
+        <div class="au-two">
+          <div class="au-field" data-field="ck-comp"><label for="ck-comp">Apto, torre, oficina <span class="au-hint">(opcional)</span></label>
+            <input type="text" id="ck-comp" maxlength="${CO.LIMITES.complemento}" placeholder="Torre 2, apto 504"><small class="au-error" id="ck-comp-error"></small></div>
+          <div class="au-field" data-field="ck-barrio"><label for="ck-barrio">Barrio</label>
+            <input type="text" id="ck-barrio" required maxlength="${CO.LIMITES.barrio}"><small class="au-error" id="ck-barrio-error"></small></div>
+        </div>
+        <div class="au-field" data-field="ck-cel"><label for="ck-cel">Celular de quien recibe</label>
+          <div class="au-prefix"><span>+57</span><input type="tel" id="ck-cel" inputmode="numeric" autocomplete="tel-national" required maxlength="12" data-filter="celular"></div>
+          <small class="au-error" id="ck-cel-error"></small></div>
+        <div class="au-field" data-field="ck-ind"><label for="ck-ind">Indicaciones para la entrega <span class="au-hint">(opcional)</span></label>
+          <input type="text" id="ck-ind" maxlength="${CO.LIMITES.indicaciones}" placeholder="Portería, horario, punto de referencia"><small class="au-error" id="ck-ind-error"></small></div>
+      </fieldset>
       <div class="modal-total" id="checkout-total"></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost" data-modal-cancel>Volver</button>
@@ -189,6 +220,9 @@ function searchProducts(query, { productos, catMap }) {
 
 // ---- Inicialización ---------------------------------------------------------
 export async function initLayout() {
+  if (!document.querySelector('link[href="css/auth.css"]')) {
+    document.head.insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="css/auth.css">');
+  }
   document.body.insertAdjacentHTML('afterbegin', headerHTML());
   document.body.insertAdjacentHTML('beforeend', footerHTML() + overlaysHTML());
 
@@ -330,30 +364,98 @@ export async function initLayout() {
     }
   });
 
-  // -- Checkout simulado --
+  // -- Checkout: exige cuenta verificada y dirección colombiana válida --
   const dialog = $('#checkout');
   const form = $('#checkout-form');
   const done = $('#checkout-done');
-  $('#cart-foot').addEventListener('click', (e) => {
-    if (!e.target.closest('#checkout-open')) return;
+  $$('[data-filter]', form).forEach((el) => CO.filtrarEntrada(el, el.dataset.filter));
+  let buyer = null;
+
+  const ckErr = (id, text) => {
+    const el = $(`#${id}-error`); if (el) el.textContent = text || '';
+    const f = form.querySelector(`[data-field="${id}"]`); if (f) f.classList.toggle('has-error', Boolean(text));
+    return !text;
+  };
+  const addr = () => ({ via: $('#ck-via').value, numero: $('#ck-num').value, cruce: $('#ck-cruce').value, placa: $('#ck-placa').value, complemento: $('#ck-comp').value });
+  const preview = () => {
+    const a = addr();
+    $('#ck-preview').innerHTML = a.via && a.numero && a.cruce && a.placa ? `Así quedará: <b>${escapeHTML(CO.formatoDireccion(a))}</b>` : 'Ejemplo: Calle 12B # 34A - 56';
+  };
+  ['#ck-via', '#ck-num', '#ck-cruce', '#ck-placa', '#ck-comp'].forEach((s) => $(s).addEventListener('input', preview));
+  form.addEventListener('input', (e) => { const f = e.target.closest('[data-field]'); if (f?.classList.contains('has-error')) ckErr(f.dataset.field, ''); });
+
+  async function openCheckout() {
+    if (!cart.count()) { toast('Tu carrito está vacío', 'error'); return; }
+    const { currentUser } = await import('./auth-core.js');
+    buyer = await currentUser();
+    if (!buyer || !buyer.email_confirmed_at) {
+      closeDrawers(false);
+      try { sessionStorage.setItem('vokter-volver', location.pathname.split('/').pop() || 'index.html'); } catch { /* sin almacenamiento */ }
+      toast('Ingresa o crea tu cuenta para comprar');
+      setTimeout(() => { location.href = 'cuenta.html?volver=checkout#login'; }, 700);
+      return;
+    }
+    const m = buyer.user_metadata || {};
     closeDrawers(false);
     form.hidden = false;
     done.hidden = true;
     form.reset();
+    $$('[data-field]', form).forEach((f) => ckErr(f.dataset.field, ''));
+    $('#ck-who').innerHTML = `<strong>${escapeHTML(m.nombre || buyer.email)}</strong>${escapeHTML(m.tipo_documento || '')} ${escapeHTML(m.documento || '')} · ${escapeHTML(buyer.email)}`;
+    $('#ck-cel').value = m.celular || '';
+    preview();
     $('#checkout-total').innerHTML = `<span>Total a pagar</span><strong>${formatPrice(cart.total())}</strong>`;
     dialog.showModal();
-  });
+  }
+  $('#cart-foot').addEventListener('click', (e) => { if (e.target.closest('#checkout-open')) openCheckout(); });
+  if (new URLSearchParams(location.search).get('checkout') === '1') {
+    history.replaceState(null, '', location.pathname + location.hash);
+    setTimeout(openCheckout, 300);
+  }
   $$('[data-modal-cancel]').forEach((b) => b.addEventListener('click', () => dialog.close()));
   dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
-  form.addEventListener('submit', (e) => {
+
+  let sending = false;
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const missing = $$('input', form).find((i) => !i.value.trim());
-    if (missing) { missing.focus(); toast('Completa todos los campos para confirmar', 'error'); return; }
-    const order = `VK-${Math.floor(100000 + Math.random() * 900000)}`;
-    $('#done-text').textContent = `Tu número de pedido es ${order}. Te contactaremos al ${form.celular.value} para coordinar el envío.`;
-    cart.clear();
-    form.hidden = true;
-    done.hidden = false;
+    if (sending) return;
+    const a = addr();
+    const v = { dep: $('#ck-dep').value, mun: $('#ck-mun').value, barrio: $('#ck-barrio').value, cel: $('#ck-cel').value, ind: $('#ck-ind').value };
+    const checks = [
+      ckErr('ck-dep', CO.validarDepartamento(v.dep)),
+      ckErr('ck-mun', CO.validarMunicipio(v.mun)),
+      ckErr('ck-dir', CO.validarDireccion(a)),
+      ckErr('ck-comp', CO.validarTextoLibre(a.complemento, CO.LIMITES.complemento)),
+      ckErr('ck-barrio', CO.validarTextoLibre(v.barrio, CO.LIMITES.barrio, { requerido: true, campo: 'el barrio' })),
+      ckErr('ck-cel', CO.validarCelular(v.cel)),
+      ckErr('ck-ind', CO.validarTextoLibre(v.ind, CO.LIMITES.indicaciones))
+    ];
+    if (checks.includes(false)) {
+      form.querySelector('.has-error input, .has-error select')?.focus();
+      toast('Revisa los datos de envío marcados en rojo', 'error');
+      return;
+    }
+    sending = true;
+    const btn = form.querySelector('[type="submit"]'); btn.disabled = true;
+    try {
+      const { createOrder } = await import('./auth-core.js');
+      const order = await createOrder({
+        items: cart.items.map((i) => ({ id: i.id, nombre: i.nombre, precio: i.precio, cantidad: i.qty, variante: i.variante || null })),
+        subtotal: cart.subtotal(), envio: cart.shipping(), total: cart.total(),
+        direccion: {
+          departamento: v.dep, municipio: CO.limpiar(v.mun), direccion: CO.formatoDireccion(a),
+          barrio: CO.limpiar(v.barrio), indicaciones: CO.limpiar(v.ind) || null
+        },
+        celular: CO.normalizarCelular(v.cel)
+      });
+      const code = 'VK-' + String(order?.id || Date.now()).replace(/-/g, '').slice(0, 8).toUpperCase();
+      $('#done-text').textContent = `Tu número de pedido es ${code}. Te contactaremos al ${CO.formatoCelular(CO.normalizarCelular(v.cel))} para coordinar el pago y el envío a ${CO.limpiar(v.mun)}, ${v.dep}.`;
+      cart.clear();
+      form.hidden = true;
+      done.hidden = false;
+    } catch (err) {
+      toast(err.message || 'No pudimos registrar el pedido. Inténtalo de nuevo.', 'error');
+    } finally { sending = false; btn.disabled = false; }
   });
 
   // -- Buscador rápido --
@@ -475,11 +577,27 @@ export async function initLayout() {
     <a href="descarga.html">App móvil</a>
     <a href="ayuda.html">Ayuda</a>
     <a href="contacto.html">Contacto</a>
+    <a href="cuenta.html" id="mobile-account">Mi cuenta</a>
     <p class="mobile-sub">Categorías</p>
     ${data.categorias.map((c) => `<a href="catalogo.html?cat=${c.slug}">${escapeHTML(c.nombre)}</a>`).join('')}`;
 
   if (overlay.classList.contains('open')) renderResults();
+  initAccountButton();
   return data;
+}
+
+// Botón de cuenta del encabezado: muestra el nombre si hay sesión.
+async function initAccountButton() {
+  const btn = $('#account-btn');
+  if (!btn) return;
+  if (currentPage() === 'cuenta.html') btn.setAttribute('aria-current', 'page');
+  const { currentUser, onAuthChange, displayName } = await import('./auth-core.js');
+  const paint = (user) => {
+    $('#account-name').textContent = user ? displayName(user) : 'Ingresar';
+    btn.setAttribute('aria-label', user ? `Mi cuenta (${displayName(user)})` : 'Ingresar o crear cuenta');
+  };
+  paint(await currentUser());
+  onAuthChange(paint);
 }
 
 export function openCart() {
