@@ -296,12 +296,13 @@ input::placeholder, textarea::placeholder { color: var(--ink-soft); font-weight:
 .hero-stage {
   --h1: #0A57F5; --h2: #7A4DFF;
   position: relative; overflow: hidden; isolation: isolate; min-height: 580px; border-radius: 36px; color: #fff;
+  display: grid; /* todas las diapositivas en la misma celda: el hero crece con la más alta y nada queda debajo de las miniaturas */
   background: linear-gradient(125deg, var(--h1), var(--h2));
   transition: --h1 .9s ease, --h2 .9s ease;
 }
 .hero-stage::before { content: ""; position: absolute; inset: 0; z-index: -1;
   background: radial-gradient(60% 80% at 82% 18%, rgba(255, 255, 255, .24), transparent 62%), radial-gradient(40% 50% at 6% 100%, rgba(255, 201, 49, .3), transparent 70%); }
-.slide { position: absolute; inset: 0; display: grid; grid-template-columns: 1.08fr .92fr; gap: 24px; align-items: center; padding: 56px 64px 156px; opacity: 0; visibility: hidden; transition: opacity .6s var(--ease), visibility 0s .6s; }
+.slide { position: relative; grid-area: 1 / 1; display: grid; grid-template-columns: 1.08fr .92fr; gap: 24px; align-items: center; padding: 56px 64px 156px; opacity: 0; visibility: hidden; transition: opacity .6s var(--ease), visibility 0s .6s; }
 .slide.active { opacity: 1; visibility: visible; transition-delay: 0s; }
 .slide-copy { display: grid; justify-items: start; }
 .slide-copy > * { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .95s var(--ease); }
