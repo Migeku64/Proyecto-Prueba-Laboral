@@ -207,7 +207,7 @@
     control.className = 'phone-control';
     control.innerHTML = `<select id="${id}-code" aria-label="Código de país"><option value="+57">+57</option><option value="+54">+54</option><option value="+56">+56</option><option value="+593">+593</option><option value="+52">+52</option><option value="+51">+51</option><option value="+58">+58</option></select>`;
     input.type = 'tel'; input.inputMode = 'numeric'; input.pattern = '[0-9]*'; input.maxLength = 15; input.placeholder = '300 000 0000'; input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, ''); });
-    control.appendChild(input); input.replaceWith(control);
+    input.replaceWith(control); control.appendChild(input);
     const country = $(`#${countryId}`, container); const code = $(`#${id}-code`, container);
     const syncCode = () => { if (codes[country?.value]) code.value = codes[country.value]; };
     country?.addEventListener('change', syncCode); syncCode();
