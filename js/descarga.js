@@ -6,7 +6,7 @@ import { phoneMock } from './components.js';
 import { toast } from './ui.js';
 
 
-const APK_URL = 'https://migeku64.github.io/Proyecto-Prueba-Laboral/descargas/fanaticos-360.apk?v=3.24.0';
+const APK_URL = 'https://raw.githubusercontent.com/Migeku64/Proyecto-Prueba-Laboral/main/descargas/fanaticos-360.apk?v=3.24.0';
 
 const data = await initLayout();
 
